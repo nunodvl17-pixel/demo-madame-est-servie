@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="fr" data-theme="cognac">
+<html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Retouches Paris 17e, Batignolles | Madame est servie</title>
 <meta name="description" content="Retouches de tous vêtements et rideaux, cuir, daim et maroquinerie aux Batignolles (Paris 17e). 30 ans d'expérience, travail traditionnel à la main, ouvert 7 jours sur 7.">
 <meta property="og:type" content="website">
@@ -27,7 +27,6 @@
   "telephone": "+33662683147",
   "address": {"@type": "PostalAddress", "streetAddress": "36 boulevard des Batignolles", "addressLocality": "Paris", "postalCode": "75017", "addressCountry": "FR"},
   "geo": {"@type": "GeoCoordinates", "latitude": 48.8830181, "longitude": 2.3236666},
-  "areaServed": [{"@type": "City", "name": "Paris 17e"}, {"@type": "City", "name": "Paris 8e"}, {"@type": "City", "name": "Paris 9e"}],
   "openingHoursSpecification": [
     {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "10:00", "closes": "18:00"},
     {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "11:00", "closes": "18:00"}
@@ -35,294 +34,237 @@
 }
 </script>
 <style>
+  /* ---------- Palette « cognac » : expresso, crème et cuir. Le jaune est réservé au mètre ruban ---------- */
   :root {
-    --white: #FFFFFF; --tape: #F4C430; --red: #D2283C; --radius: 28px;
+    --night: #22160F; --night-2: #32221A; --mist: #F6F0E8; --ink: #1E140E; --grey: #6B5A4E; --grey-light: #CDB9A6;
+    --accent: #F3E6D3; --on-accent: #22160F; --accent-hover: #FFFFFF; --accent-text: #DDA36A; --link: #8F5426; --star: #DDA36A;
+    --tape: #F4C430; --red: #D2283C; --radius: 26px;
+    --glass: rgba(30, 19, 12, .78);
     --serif: "Instrument Serif", "Times New Roman", serif;
   }
-  /* ---------- Palette « cognac » : expresso, crème et cuir. Le jaune reste réservé au mètre ruban ---------- */
-  :root, [data-theme="cognac"] {
-    --night: #22160F; --night-2: #32221A; --glow: #4A2F1F; --mist: #F6F0E8; --ink: #1E140E; --grey: #6B5A4E; --grey-light: #CDB9A6;
-    --accent: #F3E6D3; --on-accent: #22160F; --accent-hover: #FFFFFF; --accent-text: #DDA36A; --link: #8F5426; --star: #B4692C;
-    --light-ground: #2e1c12; --light-rim: #ffd2a8;
-  }
-
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; background: var(--night); }
   body {
-    margin: 0; background: var(--white); color: var(--ink);
+    margin: 0; color: #fff; background: radial-gradient(90% 60% at 50% 30%, #3b261a 0%, var(--night) 70%) fixed, var(--night);
     font: 400 18px/1.55 "Geist", system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
   }
-  h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.035em; line-height: 1.02; }
-  /* nouveauté : grands titres en serif fine, une touche couture */
+  h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
   h1, h2 { font-family: var(--serif); font-weight: 400; letter-spacing: -0.015em; line-height: 0.98; }
   h1 em, h2 em { font-style: italic; color: var(--accent-text); }
   a { color: inherit; }
   :focus-visible { outline: 3px solid var(--accent-text); outline-offset: 4px; border-radius: 8px; }
-  .wrap { width: min(1180px, 100% - 40px); margin-inline: auto; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-  /* ---------- Navigation verre dépoli ---------- */
-  .nav {
-    position: fixed; inset: 0 0 auto 0; z-index: 50;
-    background: color-mix(in srgb, var(--night) 72%, transparent);
-    -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
-    border-bottom: 1px solid rgba(255,255,255,.08);
-    color: #fff; transition: background .3s ease;
-  }
-  .nav.on-hero { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--night) 94%, transparent); }
-  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 24px; }
+  /* ---------- Le monde 3D, derrière tout le site ---------- */
+  #world { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; opacity: 0; transition: opacity 1.2s ease; }
+  #world.ready { opacity: 1; }
+
+  /* ---------- Navigation ---------- */
+  .nav { position: fixed; inset: 0 0 auto 0; z-index: 50; background: rgba(34,22,15,.86); border-bottom: 1px solid rgba(255,255,255,.07); }
+  .nav .in { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 24px; width: min(1240px, 100% - 32px); margin-inline: auto; }
   .nav .brand { font-family: var(--serif); font-style: italic; font-size: 22px; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
   .nav .brand i { width: 22px; height: 6px; border-radius: 2px; background: var(--tape); display: block; }
-  .nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; font-size: 14px; }
-  .nav ul a { text-decoration: none; opacity: .8; display: inline-block; padding: 10px 4px; }
+  .nav ul { display: flex; gap: 26px; list-style: none; margin: 0; padding: 0; font-size: 14px; }
+  .nav ul a { text-decoration: none; opacity: .78; display: inline-block; padding: 10px 2px; }
   .nav ul a:hover { opacity: 1; }
   .nav .call { font-size: 14px; font-weight: 600; text-decoration: none; background: var(--accent); color: var(--on-accent); padding: 10px 18px; border-radius: 999px; white-space: nowrap; }
+  @media (max-width: 900px) { .nav ul { display: none; } }
 
-  .demo-note { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 40; background: rgba(30,20,14,.88); color: #fff; font-size: 12px; padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+  /* compteur de centimètres déroulés */
+  .cm { position: fixed; left: 16px; bottom: 16px; z-index: 40; display: flex; align-items: baseline; gap: 6px; font-size: 13px; color: var(--grey-light);
+        background: rgba(30,19,12,.7); border: 1px solid rgba(255,255,255,.08); padding: 7px 12px; border-radius: 999px; pointer-events: none; }
+  .cm b { font-family: var(--serif); font-weight: 400; font-size: 22px; color: var(--tape); line-height: 1; min-width: 2.2ch; text-align: right; }
+  .demo-note { position: fixed; right: 16px; bottom: 16px; z-index: 40; background: rgba(30,20,14,.88); color: #fff; font-size: 12px; padding: 7px 12px; border-radius: 999px; white-space: nowrap; }
 
   /* ---------- Boutons ---------- */
-  .pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 0 26px; border-radius: 999px; font-weight: 600; font-size: 17px; text-decoration: none; transition: transform .2s ease, background .2s ease; }
+  .pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 0 24px; border-radius: 999px; font-weight: 600; font-size: 17px; text-decoration: none; transition: transform .2s ease, background .2s ease; }
   .pill:active { transform: scale(.97); }
   .pill svg { width: 19px; height: 19px; }
   .pill-tape { background: var(--accent); color: var(--on-accent); }
   .pill-tape:hover { background: var(--accent-hover); }
   .pill-ghost { color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.45); }
   .pill-ghost:hover { box-shadow: inset 0 0 0 1.5px #fff; }
-  .pill-dark { background: var(--night); color: #fff; }
-  .pill-dark:hover { background: var(--night-2); }
-  .link-more { color: var(--link); text-decoration: none; font-weight: 500; }
+  .link-more { color: var(--accent-text); text-decoration: none; font-weight: 500; }
   .link-more:hover { text-decoration: underline; }
 
-  /* ---------- Hero 3D ---------- */
-  .hero {
-    position: relative; height: 100vh; height: 100svh; min-height: 620px; overflow: hidden;
-    background:
-      radial-gradient(60% 50% at 50% 62%, rgba(221,163,106,.16), transparent 70%),
-      radial-gradient(80% 70% at 50% 0%, var(--glow) 0%, transparent 60%),
-      var(--night);
-    color: #fff;
-  }
-  #tape3d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .hero-copy { position: absolute; left: 0; right: 0; top: 15%; text-align: center; padding: 0 20px; z-index: 2; pointer-events: none; }
-  .hero-copy .kicker { font-size: clamp(17px, 2vw, 21px); color: var(--grey-light); margin: 0 0 16px; font-weight: 500; }
-  .hero h1 { font-size: clamp(56px, 10vw, 140px); }
-  .hero-copy .sub { font-family: var(--serif); font-style: italic; font-size: clamp(22px, 2.6vw, 30px); color: var(--grey-light); margin: 12px 0 0; }
-  .hero-copy .actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 30px; pointer-events: auto; }
-  #tape3d { cursor: grab; touch-action: pan-y; }
-  #tape3d.grabbing { cursor: grabbing; }
-  .drag-hint {
-    position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); z-index: 3;
-    display: inline-flex; align-items: center; gap: 10px; pointer-events: none;
-    font-size: 14px; color: rgba(255,255,255,.75); background: rgba(255,255,255,.08);
-    padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.14);
-    transition: opacity .5s ease; white-space: nowrap;
-  }
-  @media (max-width: 760px) { .drag-hint { bottom: 13%; font-size: 13px; } }
-  .drag-hint svg { width: 18px; height: 18px; }
-  .drag-hint.gone { opacity: 0; }
-  @media (prefers-reduced-motion: no-preference) {
-    .drag-hint svg { animation: nudge 2.4s ease-in-out infinite; }
-    @keyframes nudge { 0%, 100% { transform: translateX(-4px); } 50% { transform: translateX(4px); } }
-  }
-  .hero-stats { position: absolute; left: 0; right: 0; top: 22%; text-align: center; z-index: 2; padding: 0 20px; opacity: 0; visibility: hidden; }
-  .hero-stats .big { font-family: var(--serif); font-size: clamp(80px, 14vw, 200px); line-height: 1; }
-  .hero-stats .big span { color: var(--accent-text); font-style: italic; }
-  .hero-stats p { margin: 14px 0 0; font-size: clamp(18px, 2.2vw, 24px); color: var(--grey-light); }
-  .no-webgl .css-tape { display: block; }
-  .css-tape { display: none; position: absolute; left: -5%; right: -5%; top: 64%; height: 64px; transform: rotate(-3deg);
-    background-color: var(--tape);
-    background-image: repeating-linear-gradient(90deg, #10131C 0 2px, transparent 2px 40px), repeating-linear-gradient(90deg, rgba(16,19,28,.6) 0 1px, transparent 1px 8px);
-    background-size: 100% 30px, 100% 14px; background-repeat: repeat-x; }
+  /* ---------- Chapitres ----------
+     Sans JavaScript : une page normale. Avec : chaque chapitre est un « espace de défilement »
+     dont le contenu apparaît au bon moment pendant que le mètre se déroule. */
+  .ch { position: relative; z-index: 2; }
+  .stick { display: flex; align-items: center; padding: 96px max(20px, calc(50% - 600px)) 72px; min-height: 100svh; }
+  .js .ch { height: calc(var(--h) * 1svh); }
+  .js .stick { position: fixed; inset: 0; min-height: 0; visibility: hidden; opacity: 0; pointer-events: none; }
+  .js .stick a, .js .stick .glass { pointer-events: auto; }
+  .js .ch-hero .stick { visibility: visible; opacity: 1; }
 
-  /* ---------- Texte qui s'éclaire au scroll ---------- */
-  .statement { padding: 160px 0 140px; }
-  .statement p { font-family: var(--serif); font-size: clamp(36px, 5.2vw, 72px); letter-spacing: -0.01em; line-height: 1.08; margin: 0; max-width: 22ch; }
-  .statement .w { opacity: .16; }
-  .statement.static .w { opacity: 1; }
+  .glass { width: min(540px, 100%); background: var(--glass); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); padding: 36px 36px 34px;
+           box-shadow: 0 30px 80px -30px rgba(0,0,0,.6); }
+  .label { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-light); margin: 0 0 18px; }
+  .label::before { content: ""; width: 18px; height: 5px; border-radius: 2px; background: var(--tape); }
+  .label .at { color: var(--tape); letter-spacing: 0; text-transform: none; font-weight: 600; }
+  .glass h2 { font-size: clamp(44px, 5vw, 64px); margin-bottom: 18px; }
+  .glass p { margin: 0; color: var(--grey-light); }
 
-  /* ---------- Services : galerie horizontale ---------- */
-  .services { background: var(--mist); overflow: hidden; }
-  .services-head { padding: 120px 0 56px; display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
-  .services-head h2 { font-size: clamp(48px, 7vw, 96px); max-width: 12ch; }
-  .services-head p { max-width: 30em; color: var(--grey); margin: 0; }
-  .track-viewport { padding-bottom: 120px; }
-  .track { display: flex; gap: 24px; padding-inline: max(20px, calc((100vw - 1180px) / 2)); width: max-content; }
-  .card { position: relative; width: min(440px, 82vw); min-height: 560px; border-radius: var(--radius); padding: 40px 36px 36px; display: flex; flex-direction: column; background: var(--white); overflow: hidden; }
-  .card.dark { background: var(--night); color: #fff; }
-  .card .from { font-size: 15px; color: var(--grey); margin: 0 0 4px; }
+  /* centré en haut : accueil, note et fin */
+  .center-top { align-items: flex-start; justify-content: center; text-align: center; padding-top: 15svh; }
+  .center-top > div { max-width: 900px; }
+  .kicker { font-size: clamp(16px, 2vw, 20px); color: var(--grey-light); margin: 0 0 16px; font-weight: 500; }
+  .hero h1 { font-size: clamp(56px, 10vw, 140px); text-shadow: 0 6px 40px rgba(0,0,0,.45); }
+  .hero .sub { font-family: var(--serif); font-style: italic; font-size: clamp(22px, 2.6vw, 30px); color: var(--grey-light); margin: 12px 0 0; }
+  .actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .scroll-hint { position: fixed; left: 50%; bottom: 72px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,.78);
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); padding: 9px 16px; border-radius: 999px; white-space: nowrap; }
+  .scroll-hint i { width: 2px; height: 14px; background: var(--tape); border-radius: 1px; display: block; }
+  @media (prefers-reduced-motion: no-preference) { .scroll-hint i { animation: drip 1.6s ease-in-out infinite; } @keyframes drip { 0%,100% { transform: translateY(-3px); opacity: .5 } 50% { transform: translateY(3px); opacity: 1 } } }
+  .js .scroll-hint { position: absolute; }
+  .note .big { font-family: var(--serif); font-size: clamp(96px, 16vw, 220px); line-height: .9; text-shadow: 0 6px 40px rgba(0,0,0,.45); }
+  .note .big span { color: var(--accent-text); font-style: italic; }
+  .note p { font-size: clamp(18px, 2.2vw, 24px); color: var(--grey-light); margin: 14px 0 0; }
+  .stars { display: inline-flex; gap: 4px; margin-top: 16px; }
+  .stars svg { width: 22px; height: 22px; fill: var(--tape); }
+
+  /* phrase qui s'éclaire */
+  .statement .glass { width: min(640px, 100%); }
+  .statement p.say { font-family: var(--serif); color: #fff; font-size: clamp(32px, 3.8vw, 50px); line-height: 1.1; letter-spacing: -0.01em; }
+  .js .statement .w { opacity: .18; }
+
+  /* savoir-faire */
+  .craft-list { display: grid; gap: 0; margin-top: 6px; }
+  .craft-item { padding: 18px 0; border-top: 1px solid rgba(255,255,255,.1); }
+  .craft-item .k { font-family: var(--serif); font-style: italic; font-size: 24px; color: var(--accent-text); margin: 0 0 4px; }
+  .craft-item h3 { font-size: 22px; margin-bottom: 6px; }
+  .craft-item p { font-size: 16px; }
+
+  /* diapositives empilées (tarifs, étapes, avis, infos) */
+  .slides { display: grid; }
+  .slide { grid-area: 1 / 1; }
+  .head-only { margin-bottom: 22px; }
+  .head-only h2 { font-size: clamp(44px, 5vw, 64px); text-shadow: 0 4px 30px rgba(0,0,0,.5); }
+  .stack { width: min(540px, 100%); }
+
+  /* cartes de prix */
+  .card { background: var(--mist); color: var(--ink); border-radius: var(--radius); padding: 30px 32px 28px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.65); }
+  .card.dark { background: var(--glass); color: #fff; border: 1px solid rgba(255,255,255,.1); }
+  .card .top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .card .from { font-size: 15px; color: var(--grey); margin: 0; }
   .card.dark .from { color: var(--grey-light); }
-  .card .price { font-family: var(--serif); font-size: 92px; line-height: 1; }
-  .card h3 { font-size: 30px; margin: 28px 0 18px; }
-  .card ul { list-style: none; padding: 0; margin: 0 0 auto; }
-  .card li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid rgba(30,20,14,.09); font-size: 16px; }
+  .card .price { font-family: var(--serif); font-size: 84px; line-height: 1; }
+  .card .num { font-family: var(--serif); font-style: italic; font-size: 22px; color: var(--link); }
+  .card.dark .num { color: var(--accent-text); }
+  .card h3 { font-size: 27px; margin: 14px 0 12px; }
+  .card ul { list-style: none; padding: 0; margin: 0; }
+  .card li { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-top: 1px solid rgba(30,20,14,.1); font-size: 16px; }
   .card.dark li { border-top-color: rgba(255,255,255,.12); }
   .card li b { font-weight: 600; white-space: nowrap; }
-  .card .ico { position: absolute; right: 30px; top: 34px; width: 56px; height: 56px; color: var(--ink); }
-  .card.dark .ico { color: var(--accent-text); }
-  .card .foot { margin-top: 28px; font-size: 14px; color: var(--grey); }
+  .card .foot { margin: 14px 0 0; font-size: 14px; color: var(--grey); }
   .card.dark .foot { color: var(--grey-light); }
-  @media (hover: hover) {
-    .card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
-    .card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -24px color-mix(in srgb, var(--night) 35%, transparent); }
-  }
-  .track-note { width: min(1180px, 100% - 40px); margin: 28px auto 0; font-size: 15px; color: var(--grey); }
+  .fine { font-size: 14px; color: var(--grey-light); margin: 14px 0 0; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
 
+  /* tout ce que fait l'atelier */
+  .all { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+  .all li { padding: 10px 0; border-top: 1px solid rgba(255,255,255,.1); font-size: 16px; display: flex; gap: 10px; align-items: baseline; }
+  .all li::before { content: ""; width: 12px; height: 4px; border-radius: 2px; background: var(--tape); flex: none; transform: translateY(-4px); }
+
+  /* chiffres */
+  .nums { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 24px; margin-top: 8px; }
+  .nums .v { font-family: var(--serif); font-size: clamp(62px, 6vw, 88px); line-height: 1; color: #fff; }
+  .nums .v small { font-family: "Geist", system-ui, sans-serif; font-size: .28em; color: var(--grey-light); margin-left: 6px; }
+  .nums p { font-size: 15px; margin-top: 6px; }
+  .bar { height: 4px; background: rgba(255,255,255,.1); border-radius: 2px; margin-top: 12px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: var(--w); background: var(--tape); transform-origin: left; }
+
+  /* étapes */
+  .step .n { font-family: var(--serif); font-style: italic; font-size: 30px; color: var(--accent-text); margin: 0 0 8px; }
+  .step h3 { font-size: clamp(30px, 3.2vw, 40px); margin-bottom: 12px; }
+
+  /* avis */
+  .score { display: flex; align-items: flex-end; gap: 18px; margin-bottom: 22px; }
+  .score .big { font-family: var(--serif); font-size: 96px; line-height: .9; }
+  .score .big small { font-size: .38em; color: var(--grey-light); }
+  .score p { margin: 0 0 8px; }
+  .bars { display: grid; gap: 9px; }
+  .bars div { display: grid; grid-template-columns: 72px 1fr 26px; gap: 12px; align-items: center; font-size: 14px; color: var(--grey-light); }
+  .bars i { height: 7px; border-radius: 4px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .bars i::before { content: ""; display: block; height: 100%; width: var(--w); background: var(--tape); border-radius: 4px; }
+  .bars b { color: #fff; text-align: right; }
+  .quote { margin: 0; padding: 18px 0; border-top: 1px solid rgba(255,255,255,.1); }
+  .quote:first-of-type { border-top: 0; padding-top: 0; }
+  .quote blockquote { margin: 0 0 8px; font-family: var(--serif); font-size: clamp(28px, 2.8vw, 36px); line-height: 1.12; color: #fff; }
+  .quote figcaption { font-size: 14px; color: var(--grey-light); }
+
+  /* infos */
+  .addr { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.3; margin: 0 0 6px; color: #fff !important; }
+  .glass .muted { margin: 0 0 24px; }
+  .glass .actions { justify-content: flex-start; margin-top: 0; }
+  .status { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; margin: 0 0 12px !important; font-size: 17px; color: #fff !important; }
+  .status::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--grey-light); }
+  .status.open::before { background: #2DBE6C; box-shadow: 0 0 0 5px rgba(45,190,108,.18); }
+  .status.closed::before { background: var(--red); box-shadow: 0 0 0 5px rgba(210,40,60,.15); }
+  .status.pause::before { background: #E08A00; box-shadow: 0 0 0 5px rgba(224,138,0,.18); }
+  .hours { width: 100%; border-collapse: collapse; font-size: 16px; }
+  .hours th { text-align: left; font-weight: 500; padding: 9px 0; color: var(--grey-light); }
+  .hours td { text-align: right; padding: 9px 0; color: var(--grey-light); }
+  .hours tr + tr { border-top: 1px solid rgba(255,255,255,.08); }
+  .hours tr.today th, .hours tr.today td { color: #fff; font-weight: 600; }
+  .urgent { margin: 16px 0 0 !important; font-size: 15px; }
+  .urgent b { color: #fff; }
+
+  /* fin */
+  .final h2 { font-size: clamp(64px, 10vw, 140px); text-shadow: 0 6px 40px rgba(0,0,0,.5); }
+  .final p { font-size: 21px; color: var(--grey-light); margin: 18px 0 0; }
+  .final .addr-line { position: absolute; left: 0; right: 0; bottom: 70px; font-size: 14px; color: var(--grey-light); }
+
+  /* barre d'appel mobile */
   .skip { position: fixed; left: 16px; top: -60px; z-index: 100; background: var(--accent); color: var(--on-accent); padding: 12px 18px; border-radius: 999px; font-weight: 600; text-decoration: none; transition: top .2s ease; }
   .skip:focus { top: 12px; }
-
   .callbar { display: none; }
-  @media (max-width: 760px) {
-    .callbar { display: flex; position: fixed; left: 12px; right: 12px; z-index: 45; bottom: calc(12px + env(safe-area-inset-bottom)); transform: translateY(140%); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
-    .callbar.show { transform: none; }
-    .callbar .pill { flex: 1; min-height: 54px; box-shadow: 0 12px 30px -8px color-mix(in srgb, var(--night) 55%, transparent); }
-    .callbar .i-phone { width: 22px; height: 22px; }
-    html { scroll-padding-bottom: 88px; }
-    .demo-note { bottom: calc(78px + env(safe-area-inset-bottom)); }
-  }
-
-  #tape3d { opacity: 0; transition: opacity 1s ease .1s; }
-  #tape3d.ready { opacity: 1; }
   a, button { touch-action: manipulation; }
 
-  /* ---------- Savoir-faire (nouvelle section) ---------- */
-  .craft { padding: 0 0 140px; }
-  .craft-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .craft-item { border-top: 1px solid rgba(30,20,14,.14); padding-top: 28px; }
-  .craft-item .k { font-family: var(--serif); font-style: italic; font-size: 26px; color: var(--link); margin: 0 0 10px; }
-  .craft-item h3 { font-size: 26px; margin-bottom: 12px; letter-spacing: -0.02em; line-height: 1.15; }
-  .craft-item p { margin: 0; color: var(--grey); }
-
-  .services-all { background: var(--mist); padding: 0 0 120px; }
-  .all-services h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4vw, 48px); letter-spacing: -0.01em; margin-bottom: 28px; }
-  .all-services ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 32px; }
-  .all-services li { padding: 16px 0; border-top: 1px solid rgba(30,20,14,.1); font-size: 17px; display: flex; gap: 12px; align-items: baseline; }
-  .all-services li::before { content: ""; width: 14px; height: 4px; border-radius: 2px; background: var(--tape); flex: none; transform: translateY(-4px); }
-  @media (max-width: 900px) { .all-services ul { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 520px) { .all-services ul { grid-template-columns: 1fr; } }
-
-  /* ---------- Chiffres ---------- */
-  .numbers { padding: 140px 0; }
-  .numbers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
-  .num .v { font-family: var(--serif); font-size: clamp(68px, 8.5vw, 120px); line-height: 1; }
-  .num .v small { font-family: "Geist", system-ui, sans-serif; font-size: .3em; color: var(--grey); margin-left: 6px; }
-  .num p { margin: 12px 0 0; color: var(--grey); font-size: 17px; max-width: 16em; }
-  .num-bar { height: 4px; background: var(--mist); border-radius: 2px; margin-top: 20px; overflow: hidden; }
-  .num-bar i { display: block; height: 100%; width: var(--w); background: var(--tape); transform-origin: left; }
-
-  /* ---------- Étapes ---------- */
-  .steps-sec { background: var(--night); color: #fff; padding: 140px 0; }
-  .steps-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: start; }
-  .steps-title { position: sticky; top: 120px; }
-  .steps-title h2 { font-size: clamp(48px, 6vw, 84px); }
-  .steps-title p { color: var(--grey-light); margin: 20px 0 0; max-width: 24em; }
-  .step { padding: 48px 0; border-top: 1px solid rgba(255,255,255,.12); }
-  .step:first-child { border-top: 0; padding-top: 8px; }
-  .step .n { color: var(--accent-text); font-family: var(--serif); font-style: italic; font-size: 24px; margin: 0 0 10px; }
-  .step h3 { font-size: clamp(30px, 3.4vw, 44px); margin-bottom: 12px; }
-  .step p { margin: 0; color: var(--grey-light); max-width: 30em; }
-
-  /* ---------- Avis ---------- */
-  .reviews { padding: 140px 0; }
-  .reviews h2 { font-size: clamp(48px, 7vw, 96px); max-width: 14ch; margin-bottom: 72px; }
-  .stars { display: inline-flex; gap: 3px; }
-  .stars svg { width: 20px; height: 20px; fill: var(--star); }
-  .rev-summary { display: grid; grid-template-columns: auto 1fr; gap: 56px; align-items: center; margin-bottom: 56px; padding: 40px; background: var(--mist); border-radius: var(--radius); }
-  .rev-score .big { font-family: var(--serif); font-size: 104px; line-height: 1; }
-  .rev-score .big small { font-size: .4em; color: var(--grey); }
-  .rev-score p { margin: 8px 0 0; color: var(--grey); }
-  .rev-bars { display: grid; gap: 10px; max-width: 520px; }
-  .rev-bars div { display: grid; grid-template-columns: 80px 1fr 28px; gap: 14px; align-items: center; font-size: 15px; color: var(--grey); }
-  .rev-bars i { height: 8px; border-radius: 4px; background: rgba(30,20,14,.08); overflow: hidden; }
-  .rev-bars i::before { content: ""; display: block; height: 100%; width: var(--w); background: var(--tape); border-radius: 4px; }
-  .rev-bars b { color: var(--ink); text-align: right; }
-  .quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .quote { margin: 0; padding: 32px 30px; border-radius: var(--radius); border: 1px solid rgba(30,20,14,.08); display: flex; flex-direction: column; gap: 14px; }
-  .quote blockquote { margin: 0; font-family: var(--serif); font-size: 28px; line-height: 1.15; flex: 1; }
-  .quote figcaption { font-size: 14px; color: var(--grey); }
-  .quote-note { background: var(--night); color: #fff; border: 0; }
-  .quote-note blockquote { font-family: "Geist", system-ui, sans-serif; font-weight: 500; font-size: 19px; line-height: 1.35; }
-  .quote-note .link-more { color: var(--accent-text); }
-  @media (max-width: 900px) {
-    .rev-summary { grid-template-columns: 1fr; gap: 28px; padding: 28px; }
-    .quotes, .craft-grid { grid-template-columns: 1fr; }
+  /* ---------- Téléphone : le mètre en haut, le contenu en bas ---------- */
+  @media (max-width: 760px) {
+    body { font-size: 17px; }
+    .stick { align-items: flex-end; padding: 72px 14px calc(84px + env(safe-area-inset-bottom)); }
+    .center-top { align-items: flex-start; padding-top: 13svh; }
+    .glass { padding: 24px 22px 22px; border-radius: 22px; }
+    .glass h2, .head-only h2 { font-size: 40px; margin-bottom: 12px; }
+    .head-only { margin-bottom: 12px; }
+    .card { padding: 22px 22px 20px; border-radius: 22px; }
+    .card .price { font-size: 64px; }
+    .card h3 { font-size: 23px; margin: 8px 0 6px; }
+    .card li { padding: 8px 0; font-size: 15px; }
+    .statement p.say { font-size: 29px; }
+    .craft-item { padding: 12px 0; } .craft-item h3 { font-size: 19px; } .craft-item .k { font-size: 20px; } .craft-item p { font-size: 15px; }
+    .all li { font-size: 14px; padding: 7px 0; } .all { gap: 0 14px; }
+    .nums { gap: 18px 16px; } .nums .v { font-size: 52px; }
+    .score .big { font-size: 72px; }
+    .quote blockquote { font-size: 26px; }
+    .addr { font-size: 20px; }
+    .hours { font-size: 15px; } .hours th, .hours td { padding: 6px 0; }
+    .step h3 { font-size: 28px; }
+    .callbar { display: flex; position: fixed; left: 12px; right: 12px; z-index: 45; bottom: calc(12px + env(safe-area-inset-bottom)); transform: translateY(140%); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+    .callbar.show { transform: none; }
+    .callbar .pill { flex: 1; min-height: 52px; box-shadow: 0 12px 30px -8px rgba(0,0,0,.6); }
+    .cm { bottom: auto; top: 66px; left: 12px; padding: 5px 10px; } .cm b { font-size: 18px; }
+    .demo-note { top: 66px; bottom: auto; right: 12px; font-size: 11px; padding: 6px 10px; }
+    .scroll-hint { bottom: 40px; font-size: 13px; }
+    .final .addr-line { bottom: 90px; padding: 0 16px; }
   }
-
-  /* ---------- Infos ---------- */
-  .infos { background: var(--mist); padding: 140px 0; }
-  .infos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .panel { background: var(--white); border-radius: var(--radius); padding: 44px 40px; }
-  .panel h2 { font-size: clamp(44px, 5vw, 64px); margin-bottom: 24px; }
-  .addr { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.3; margin: 0 0 6px; }
-  .panel .muted { color: var(--grey); margin: 0 0 32px; }
-  .panel .actions { display: flex; flex-wrap: wrap; gap: 12px; }
-  .status { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; margin: 0 0 20px; font-size: 17px; }
-  .status::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--grey-light); }
-  .status.open::before { background: #1E9E57; box-shadow: 0 0 0 5px rgba(30,158,87,.15); }
-  .status.closed::before { background: var(--red); box-shadow: 0 0 0 5px rgba(210,40,60,.12); }
-  .status.pause::before { background: #E08A00; box-shadow: 0 0 0 5px rgba(224,138,0,.15); }
-  .hours { width: 100%; border-collapse: collapse; font-size: 17px; }
-  .hours th { text-align: left; font-weight: 500; padding: 13px 0; }
-  .hours td { text-align: right; padding: 13px 0; color: var(--grey); }
-  .hours tr + tr { border-top: 1px solid rgba(30,20,14,.08); }
-  .hours tr.today th, .hours tr.today td { color: var(--ink); font-weight: 600; }
-  .panel .urgent { margin: 24px 0 0; padding: 16px 18px; border-radius: 16px; background: var(--mist); color: var(--grey); font-size: 16px; }
-  .panel .urgent b { color: var(--ink); }
-
-  /* ---------- Appel final ---------- */
-  .final { position: relative; background: var(--night); color: #fff; text-align: center; padding: 160px 0 150px; overflow: hidden; }
-  .final h2 { font-size: clamp(60px, 10vw, 140px); }
-  .final p { color: var(--grey-light); font-size: 21px; margin: 20px 0 40px; }
-  .final .mini-tape { position: absolute; left: -10%; right: -10%; bottom: 46px; height: 44px; transform: rotate(-2deg);
-    background-color: var(--tape);
-    background-image: repeating-linear-gradient(90deg, #10131C 0 2px, transparent 2px 40px), repeating-linear-gradient(90deg, rgba(16,19,28,.55) 0 1px, transparent 1px 8px);
-    background-size: 100% 20px, 100% 10px; background-repeat: repeat-x; opacity: .95; }
-
-  footer { background: var(--night); color: var(--grey-light); font-size: 14px; padding: 28px 0 84px; border-top: 1px solid rgba(255,255,255,.08); }
-  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-
-  /* ---------- Responsive ---------- */
-  @media (max-width: 900px) {
-    .nav ul { display: none; }
-    .numbers-grid { grid-template-columns: repeat(2, 1fr); gap: 48px 24px; }
-    .steps-grid, .infos-grid { grid-template-columns: 1fr; }
-    .steps-title { position: static; }
-    .track-viewport { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-    .track-viewport::-webkit-scrollbar { display: none; }
-    .card { scroll-snap-align: center; min-height: 520px; }
-    .statement, .numbers, .reviews, .infos, .steps-sec { padding-block: 100px; }
-    .craft { padding-bottom: 100px; }
-    .panel { padding: 36px 26px; }
-    .demo-note { bottom: 10px; font-size: 11px; }
+  @media (max-width: 760px) {
+    .ch-slides .head-only h2, .ch-slides .fine { display: none; }
+    .head-only .label { background: rgba(30,19,12,.82); padding: 6px 12px; border-radius: 999px; }
   }
-  @media (max-width: 520px) {
-    .card { padding: 32px 26px; }
-    .card .price { font-size: 76px; }
-    .hero-copy { top: 13%; }
-    .nav .brand { font-size: 20px; }
+  @media (max-width: 760px) and (max-height: 700px) {
+    .card li:nth-child(4) { display: none; }
+    .glass h2 { font-size: 34px; }
   }
-
-  /* ---------- Objets 3D de l'atelier ---------- */
-  #scene3d { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
-  .obj3d { position: absolute; pointer-events: none; }
-  .card .obj3d { right: 6px; top: 6px; width: 170px; height: 170px; }
-  .has-3d .card .ico { display: none; }
-  .card { cursor: pointer; }
-  .final .obj3d { width: 280px; height: 280px; top: 50%; margin-top: -170px; }
-  .final .obj-left { left: max(2%, calc(50% - 640px)); }
-  .final .obj-right { right: max(2%, calc(50% - 640px)); }
-  @media (max-width: 900px) {
-    .final .obj3d { width: 130px; height: 130px; top: 22px; margin-top: 0; }
-    .final .obj-left { left: 8px; } .final .obj-right { right: 8px; }
-  }
-  @media (max-width: 520px) { .card .obj3d { width: 130px; height: 130px; right: 2px; top: 2px; } }
 </style>
 </head>
 <body>
 
 <a class="skip" href="#atelier">Aller au contenu</a>
-<nav class="nav on-hero" id="nav" aria-label="Navigation principale">
-  <div class="wrap">
+<nav class="nav" aria-label="Navigation principale">
+  <div class="in">
     <a class="brand" href="#top"><i aria-hidden="true"></i>Madame est servie</a>
     <ul>
       <li><a href="#services">Tarifs</a></li>
@@ -334,825 +276,671 @@
   </div>
 </nav>
 
+<canvas id="world" aria-hidden="true"></canvas>
+<div class="cm" aria-hidden="true"><b id="cmNow">0</b>cm déroulés</div>
+
 <main id="top">
-  <!-- HERO : mètre ruban en 3D -->
-  <section class="hero" id="hero">
-    <canvas id="tape3d" aria-hidden="true"></canvas>
-    <div class="css-tape" aria-hidden="true"></div>
-    <div class="drag-hint" id="dragHint" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10m0-1.5a1.5 1.5 0 0 1 3 0V11m0-1a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.8 14a1.5 1.5 0 0 1 2.5-1.6L9 15"/></svg>Faites tourner le mètre</div>
-    <div class="hero-copy" id="heroCopy">
-      <p class="kicker">Retouches aux Batignolles, Paris 17e</p>
-      <h1>Madame est servie<em>…</em></h1>
-      <p class="sub">et Monsieur aussi.</p>
-      <div class="actions">
-        <a class="pill pill-tape" href="tel:+33662683147">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>
-          Appeler la boutique
-        </a>
-        <a class="pill pill-ghost" href="#services">Voir les tarifs</a>
-      </div>
-    </div>
-    <div class="hero-stats" id="heroStats" aria-hidden="true">
-      <div class="big">4,7<span>/5</span></div>
-      <p>98 avis Google, dont 88 à 5 étoiles</p>
-    </div>
-  </section>
 
-  <!-- Texte qui s'éclaire au scroll -->
-  <section class="statement" id="atelier">
-    <div class="wrap">
-      <p id="statement">Depuis 30 ans, Richard retouche à la main les vêtements, les rideaux et le cuir des Batignolles. Une robe à sauver, une veste déchirée, un sac à réparer : chaque pièce repart soignée, comme neuve.</p>
-    </div>
-  </section>
-
-  <!-- Savoir-faire -->
-  <section class="craft" aria-label="Le savoir-faire">
-    <div class="wrap craft-grid">
-      <div class="craft-item"><p class="k">À la main</p><h3>Un travail traditionnel.</h3><p>Des finitions soignées, faites à la main quand le tissu le demande.</p></div>
-      <div class="craft-item"><p class="k">Tous tissus</p><h3>Du coton au daim et au cuir.</h3><p>Vous pouvez confier vos plus belles pièces en toute tranquillité.</p></div>
-      <div class="craft-item"><p class="k">7 jours sur 7</p><h3>Ouvert même le dimanche.</h3><p>Et en cas d'urgence, un rendez-vous adapté à vos besoins.</p></div>
-    </div>
-  </section>
-
-  <!-- Services -->
-  <section class="services" id="services">
-    <div class="wrap services-head">
-      <h2>Ce qu'on fait <em>à l'atelier.</em></h2>
-      <p>Montrez-nous le vêtement : on vous dit ce qui est possible, et le prix avant de commencer.</p>
-    </div>
-    <div class="track-viewport" id="trackViewport">
-      <div class="track" id="track">
-        <article class="card">
-          <div class="obj3d" data-obj="spool" aria-hidden="true"></div>
-          <svg class="ico" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M221.89,214.26l-22-176A14,14,0,0,0,186,26H70A14,14,0,0,0,56.11,38.26l-22,176A14,14,0,0,0,48,230H88.69a14,14,0,0,0,13.570-10.56L128,120l25.73,99.44A14,14,0,0,0,167.31,230H208a14,14,0,0,0,13.89-15.74ZM195.22,97.66A34.07,34.07,0,0,1,166.54,70h25.23ZM70,38H186a2,2,0,0,1,2,1.75L190.27,58H65.73L68,39.75A2,2,0,0,1,70,38ZM64.23,70H89.46A34.07,34.07,0,0,1,60.78,97.66Zm26.4,146.49A2,2,0,0,1,88.69,218H48a2,2,0,0,1-2-2.25L59.25,109.87A46.07,46.07,0,0,0,101.6,70H122V95.24Zm118.870.83a2,2,0,0,1-1.5.68H167.31a2,2,0,0,1-1.95-1.56L134,95.24V70h20.4a46.07,46.07,0,0,0,42.35,39.87L210,215.75A2,2,0,0,1,209.5,217.32Z"/></svg>
-          <p class="from">À partir de</p>
-          <div class="price" data-price="12">12 €</div>
-          <h3>Pantalons, jupes et jeans</h3>
-          <ul>
-            <li>Ourlet de pantalon<b>dès 12 €</b></li>
-            <li>Ourlet fait main, tissu fragile<b>sur devis</b></li>
-            <li>Ourlet de jupe<b>dès 15 €</b></li>
-            <li>Fonds de poches<b>dès 15 €</b></li>
-          </ul>
-        </article>
-        <article class="card dark">
-          <div class="obj3d" data-obj="button" aria-hidden="true"></div>
-          <svg class="ico" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M246.64,63,194.87,34.74A5.930,5.930,0,0,0,192,34H160a6,6,0,0,0-6,6,26,26,0,0,1-52,0,6,6,0,0,0-6-6H64a5.93,5.93,0,0,0-2.88.74L9.36,63A13.77,13.770,0,0,0,3.58,81.55l19.28,36.81A14.38,14.38,0,0,0,35.67,126H58v82a14,14,0,0,0,14,14H184a14,14,0,0,0,14-14V126h22.34a14.38,14.38,0,0,0,12.81-7.64l19.28-36.81A13.77,13.77,0,0,0,246.64,63Zm-211,51a2.42,2.42,0,0,1-2.18-1.21L14.21,76a1.82,1.82,0,0,1,.9-2.47L58,50.11V114ZM186,208a2,2,0,0,1-2,2H72a2,2,0,0,1-2-2V46H90.48a38,38,0,0,0,75,0H186Zm55.8-132-19.28,36.8a2.42,2.42,0,0,1-2.18,1.21H198V50.11l42.9,23.4A1.83,1.83,0,0,1,241.79,76Z"/></svg>
-          <p class="from">À partir de</p>
-          <div class="price" data-price="15">15 €</div>
-          <h3>Vestes, robes et manteaux</h3>
-          <ul>
-            <li>Raccourcir des manches<b>dès 15 €</b></li>
-            <li>Remaillage des accrocs<b>dès 15 €</b></li>
-            <li>Ajustement de robe<b>dès 25 €</b></li>
-            <li>Doublure de manteau<b>dès 45 €</b></li>
-          </ul>
-        </article>
-        <article class="card">
-          <div class="obj3d" data-obj="buckle" aria-hidden="true"></div>
-          <svg class="ico" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,66H174V56a30,30,0,0,0-30-30H112A30,30,0,0,0,82,56V66H40A14,14,0,0,0,26,80V200a14,14,0,0,0,14,14H216a14,14,0,0,0,14-14V80A14,14,0,0,0,216,66ZM94,56a18,18,0,0,1,18-18h32a18,18,0,0,1,18,18V66H94ZM218,200a2,2,0,0,1-2,2H40a2,2,0,0,1-2-2V80a2,2,0,0,1,2-2H216a2,2,0,0,1,2,2Z"/></svg>
-          <p class="from">À partir de</p>
-          <div class="price" data-price="20">20 €</div>
-          <h3>Cuir, daim et maroquinerie</h3>
-          <ul>
-            <li>Fermeture éclair de sac<b>dès 25 €</b></li>
-            <li>Anse et bandoulière<b>dès 20 €</b></li>
-            <li>Boucle de ceinture ou de sac<b>dès 20 €</b></li>
-            <li>Ravivage des couleurs du cuir<b>sur devis</b></li>
-          </ul>
-        </article>
-        <article class="card dark">
-          <div class="obj3d" data-obj="thimble" aria-hidden="true"></div>
-          <svg class="ico" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M232,210H222V46h10a6,6,0,0,0,0-12H24a6,6,0,0,0,0,12H34V210H24a6,6,0,0,0,0,12H232a6,6,0,0,0,0-12ZM210,46V210H178.68C164.1,186.18,134,170.39,134,128s30.1-58.18,44.68-82Zm-90,82c0,42.39-30.1,58.18-44.68,82H46V46H75.32C89.9,69.82,120,85.61,120,128Z"/></svg>
-          <p class="from">À partir de</p>
-          <div class="price" data-price="30">30 €</div>
-          <h3>Rideaux et pièces délicates</h3>
-          <ul>
-            <li>Ourlet de rideaux<b>dès 30 €</b></li>
-            <li>Mise à longueur de voilage<b>dès 30 €</b></li>
-            <li>Réparation de déchirure<b>sur devis</b></li>
-          </ul>
-          <p class="foot">Urgence ? Appelez : un rendez-vous peut être adapté à vos besoins.</p>
-        </article>
-      </div>
-      <div class="track-note"><span>Prix indicatifs. Le tarif exact dépend du tissu et du travail.</span></div>
-    </div>
-  </section>
-
-  <section class="services-all">
-    <div class="all-services wrap"><h3>Tout ce que fait l'atelier</h3><ul><li>Retouches de tous vêtements</li><li>Ourlets à la machine ou à la main</li><li>Retouches de robes</li><li>Vestes et manteaux</li><li>Tous tissus</li><li>Daim et cuir</li><li>Remaillage des accrocs</li><li>Fonds de poches</li><li>Rideaux et voilages</li><li>Fermetures éclair</li><li>Anses et bandoulières</li><li>Boucles de ceinture et de sac</li><li>Ravivage du cuir</li><li>Vente de maroquinerie</li><li>Retouches urgentes sur rendez-vous</li><li>Et d'autres demandes sur place</li></ul></div>
-  </section>
-
-  <!-- Chiffres -->
-  <section class="numbers" aria-label="La boutique en chiffres">
-    <div class="wrap numbers-grid">
-      <div class="num"><div class="v"><span data-count="4.7" data-dec="1">4,7</span><small>/5</small></div><div class="num-bar"><i style="--w:94%"></i></div><p>Note moyenne sur Google</p></div>
-      <div class="num"><div class="v"><span data-count="98">98</span></div><div class="num-bar"><i style="--w:90%"></i></div><p>avis de clients du quartier</p></div>
-      <div class="num"><div class="v"><span data-count="30">30</span><small>ans</small></div><div class="num-bar"><i style="--w:100%"></i></div><p>d'expérience au service de vos attentes</p></div>
-      <div class="num"><div class="v"><span data-count="7">7</span><small>j/7</small></div><div class="num-bar"><i style="--w:100%"></i></div><p>ouvert tous les jours, même le dimanche</p></div>
-    </div>
-  </section>
-
-  <!-- Étapes -->
-  <section class="steps-sec">
-    <div class="wrap steps-grid">
-      <div class="steps-title">
-        <h2>Trois étapes, <em>sans surprise.</em></h2>
-        <p>Pas besoin de rendez-vous : passez aux heures d'ouverture, tous les jours de la semaine.</p>
-      </div>
-      <ol class="steps" style="list-style:none;margin:0;padding:0">
-        <li class="step"><p class="n">Un</p><h3>Vous passez à la boutique.</h3><p>Apportez le vêtement, le rideau ou le sac. Pour un ourlet, pensez aux chaussures que vous porterez avec.</p></li>
-        <li class="step"><p class="n">Deux</p><h3>On épingle et on mesure.</h3><p>Vous essayez, Richard place les épingles et vous donne le prix et la date avant de commencer.</p></li>
-        <li class="step"><p class="n">Trois</p><h3>Vous revenez essayer.</h3><p>Un dernier coup d'œil devant le miroir. Un point à reprendre ? On le règle.</p></li>
-      </ol>
-    </div>
-  </section>
-
-  <!-- Avis -->
-  <section class="reviews" id="avis">
-    <div class="wrap">
-      <h2>Ce qu'en disent <em>les clients.</em></h2>
-      <div class="rev-summary">
-        <div class="rev-score">
-          <div class="big">4,7<small>/5</small></div>
-          <span class="stars" data-stars aria-hidden="true"></span>
-          <p>98 avis Google</p>
-        </div>
-        <div class="rev-bars" aria-label="Répartition des 98 avis">
-          <div><span>5 étoiles</span><i style="--w:89.8%"></i><b>88</b></div>
-          <div><span>4 étoiles</span><i style="--w:1%"></i><b>1</b></div>
-          <div><span>3 étoiles</span><i style="--w:0%"></i><b>0</b></div>
-          <div><span>2 étoiles</span><i style="--w:3.1%"></i><b>3</b></div>
-          <div><span>1 étoile</span><i style="--w:6.1%"></i><b>6</b></div>
-        </div>
-      </div>
-      <div class="quotes">
-        <figure class="quote"><blockquote>« Richard a sauvé ma robe, et dans un temps record. »</blockquote><span class="stars" data-stars aria-label="5 étoiles"></span><figcaption>Adelaide P.</figcaption></figure>
-        <figure class="quote"><blockquote>« Bien plus qu'un retoucheur ! »</blockquote><span class="stars" data-stars aria-label="5 étoiles"></span><figcaption>Bruno L.</figcaption></figure>
-        <figure class="quote"><blockquote>« La veste est comme neuve. »</blockquote><span class="stars" data-stars aria-label="5 étoiles"></span><figcaption>Avis Google, réparation d'une veste en cuir</figcaption></figure>
-        <figure class="quote"><blockquote>« Disponible et professionnel. Je suis très satisfaite. »</blockquote><span class="stars" data-stars aria-label="5 étoiles"></span><figcaption>Bertille J.</figcaption></figure>
-        <figure class="quote"><blockquote>« Travail impeccable et minutieux. »</blockquote><span class="stars" data-stars aria-label="5 étoiles"></span><figcaption>Adelaide P.</figcaption></figure>
-        <figure class="quote quote-note"><blockquote>30 ans d'expérience et 98 avis Google : la boutique répond elle-même à ses clients.</blockquote><figcaption><a class="link-more" href="https://www.google.com/maps/place/Madame+est+servie+Retouches+Paris+17/@48.8830181,2.3236666,17z" target="_blank" rel="noopener">Lire les 98 avis<span class="sr-only"> (nouvel onglet)</span></a></figcaption></figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- Infos -->
-  <section class="infos" id="infos">
-    <div class="wrap infos-grid">
-      <div class="panel">
-        <h2>Nous trouver.</h2>
-        <p class="addr">36 boulevard des Batignolles<br>75017 Paris</p>
-        <p class="muted">Métro Rome ou Place de Clichy, à deux pas de la place.</p>
+  <!-- 0. Accueil : le mètre est encore enroulé -->
+  <section class="ch ch-hero" id="hero" style="--h:130" data-cam="hero">
+    <div class="stick center-top hero">
+      <div>
+        <p class="kicker">Retouches aux Batignolles, Paris 17e</p>
+        <h1>Madame est servie<em>…</em></h1>
+        <p class="sub">et Monsieur aussi.</p>
         <div class="actions">
-          <a class="pill pill-dark" href="tel:+33662683147">Appeler le 06 62 68 31 47</a>
-          <a class="pill pill-tape" style="box-shadow: inset 0 0 0 1.5px rgba(30,20,14,.14)" href="https://www.google.com/maps/dir/?api=1&destination=Madame+est+servie+36+boulevard+des+Batignolles+75017+Paris" target="_blank" rel="noopener">Itinéraire<span class="sr-only"> (nouvel onglet)</span></a>
+          <a class="pill pill-tape" href="tel:+33662683147"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>Appeler la boutique</a>
+          <a class="pill pill-ghost" href="#services">Voir les tarifs</a>
         </div>
       </div>
-      <div class="panel">
-        <p class="status" id="status">Horaires</p>
-        <table class="hours" id="hours">
-          <caption class="sr-only">Horaires d'ouverture</caption>
-          <tr data-d="1"><th scope="row">Lundi</th><td>10h – 18h</td></tr>
-          <tr data-d="2"><th scope="row">Mardi</th><td>10h – 18h</td></tr>
-          <tr data-d="3"><th scope="row">Mercredi</th><td>10h – 18h</td></tr>
-          <tr data-d="4"><th scope="row">Jeudi</th><td>10h – 18h</td></tr>
-          <tr data-d="5"><th scope="row">Vendredi</th><td>10h – 18h</td></tr>
-          <tr data-d="6"><th scope="row">Samedi</th><td>11h – 18h</td></tr>
-          <tr data-d="0"><th scope="row">Dimanche</th><td>11h – 18h</td></tr>
-        </table>
-        <p class="urgent"><b>Une urgence ?</b> Un rendez-vous peut être adapté à vos besoins.</p>
+      <div class="scroll-hint" aria-hidden="true"><i></i>Faites défiler pour dérouler le mètre</div>
+    </div>
+  </section>
+
+  <!-- 1. La note -->
+  <section class="ch" id="note" style="--h:130" data-cam="note">
+    <div class="stick center-top note">
+      <div class="reveal">
+        <div class="big">4,7<span>/5</span></div>
+        <span class="stars" data-stars aria-label="Note de 4,7 sur 5"></span>
+        <p>98 avis Google, dont 88 à 5 étoiles</p>
       </div>
     </div>
   </section>
 
-  <!-- Appel final -->
-  <section class="final">
-    <div class="wrap">
-      <h2>Vous êtes <em>servi.</em></h2>
-      <p>Passez à la boutique, on s'occupe du reste.</p>
-      <a class="pill pill-tape" href="tel:+33662683147">Appeler la boutique</a>
+  <!-- 2. L'atelier -->
+  <section class="ch statement" id="atelier" style="--h:180" data-cam="atelier">
+    <div class="stick">
+      <div class="glass reveal">
+        <p class="label">L'atelier <span class="at" data-at></span></p>
+        <p class="say" id="statement">Depuis 30 ans, Richard retouche à la main les vêtements, les rideaux et le cuir des Batignolles. Une robe à sauver, une veste déchirée, un sac à réparer : chaque pièce repart soignée, comme neuve.</p>
+      </div>
     </div>
-    <div class="obj3d obj-left" data-obj="spool" aria-hidden="true"></div>
-    <div class="obj3d obj-right" data-obj="buttons" aria-hidden="true"></div>
-    <div class="mini-tape" aria-hidden="true"></div>
+  </section>
+
+  <!-- 3. Savoir-faire -->
+  <section class="ch" id="savoir" style="--h:160" data-cam="savoir">
+    <div class="stick">
+      <div class="glass reveal">
+        <p class="label">Le savoir-faire <span class="at" data-at></span></p>
+        <div class="craft-list">
+          <div class="craft-item"><p class="k">À la main</p><h3>Un travail traditionnel.</h3><p>Des finitions soignées, faites à la main quand le tissu le demande.</p></div>
+          <div class="craft-item"><p class="k">Tous tissus</p><h3>Du coton au daim et au cuir.</h3><p>Confiez vos plus belles pièces en toute tranquillité.</p></div>
+          <div class="craft-item"><p class="k">7 jours sur 7</p><h3>Ouvert même le dimanche.</h3><p>Et en cas d'urgence, un rendez-vous adapté à vos besoins.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Tarifs : une carte à la fois, un objet 3D pour chacune au bord du mètre -->
+  <section class="ch ch-slides" id="services" style="--h:440" data-cam="services">
+    <div class="stick">
+      <div class="stack">
+        <div class="head-only reveal-head"><p class="label">Les tarifs <span class="at" data-at></span></p><h2>Ce qu'on fait <em>à l'atelier.</em></h2></div>
+        <div class="slides">
+          <article class="card slide" data-prop="0">
+            <div class="top"><p class="from">À partir de</p><span class="num">1 / 4</span></div>
+            <div class="price" data-price="12">12 €</div>
+            <h3>Pantalons, jupes et jeans</h3>
+            <ul><li>Ourlet de pantalon<b>dès 12 €</b></li><li>Ourlet fait main, tissu fragile<b>sur devis</b></li><li>Ourlet de jupe<b>dès 15 €</b></li><li>Fonds de poches<b>dès 15 €</b></li></ul>
+          </article>
+          <article class="card dark slide" data-prop="1">
+            <div class="top"><p class="from">À partir de</p><span class="num">2 / 4</span></div>
+            <div class="price" data-price="15">15 €</div>
+            <h3>Vestes, robes et manteaux</h3>
+            <ul><li>Raccourcir des manches<b>dès 15 €</b></li><li>Remaillage des accrocs<b>dès 15 €</b></li><li>Ajustement de robe<b>dès 25 €</b></li><li>Doublure de manteau<b>dès 45 €</b></li></ul>
+          </article>
+          <article class="card slide" data-prop="2">
+            <div class="top"><p class="from">À partir de</p><span class="num">3 / 4</span></div>
+            <div class="price" data-price="20">20 €</div>
+            <h3>Cuir, daim et maroquinerie</h3>
+            <ul><li>Fermeture éclair de sac<b>dès 25 €</b></li><li>Anse et bandoulière<b>dès 20 €</b></li><li>Boucle de ceinture ou de sac<b>dès 20 €</b></li><li>Ravivage des couleurs du cuir<b>sur devis</b></li></ul>
+          </article>
+          <article class="card dark slide" data-prop="3">
+            <div class="top"><p class="from">À partir de</p><span class="num">4 / 4</span></div>
+            <div class="price" data-price="30">30 €</div>
+            <h3>Rideaux et pièces délicates</h3>
+            <ul><li>Ourlet de rideaux<b>dès 30 €</b></li><li>Mise à longueur de voilage<b>dès 30 €</b></li><li>Réparation de déchirure<b>sur devis</b></li></ul>
+            <p class="foot">Urgence ? Un rendez-vous peut être adapté à vos besoins.</p>
+          </article>
+        </div>
+        <p class="fine reveal-head">Prix indicatifs. Le tarif exact dépend du tissu et du travail.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Tout ce que fait l'atelier -->
+  <section class="ch" id="tout" style="--h:160" data-cam="tout">
+    <div class="stick">
+      <div class="glass reveal">
+        <p class="label">Les prestations <span class="at" data-at></span></p>
+        <h2>Tout ce que fait <em>l'atelier.</em></h2>
+        <ul class="all"><li>Retouches de tous vêtements</li><li>Ourlets machine ou main</li><li>Retouches de robes</li><li>Vestes et manteaux</li><li>Tous tissus</li><li>Daim et cuir</li><li>Remaillage des accrocs</li><li>Fonds de poches</li><li>Rideaux et voilages</li><li>Fermetures éclair</li><li>Anses et bandoulières</li><li>Boucles de ceinture</li><li>Ravivage du cuir</li><li>Vente de maroquinerie</li><li>Urgences sur rendez-vous</li><li>Et bien plus sur place</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Les chiffres -->
+  <section class="ch" id="chiffres" style="--h:160" data-cam="chiffres">
+    <div class="stick">
+      <div class="glass reveal">
+        <p class="label">En chiffres <span class="at" data-at></span></p>
+        <div class="nums">
+          <div><div class="v"><span data-count="4.7" data-dec="1">4,7</span><small>/5</small></div><div class="bar"><i style="--w:94%"></i></div><p>Note moyenne sur Google</p></div>
+          <div><div class="v"><span data-count="98">98</span></div><div class="bar"><i style="--w:90%"></i></div><p>avis de clients du quartier</p></div>
+          <div><div class="v"><span data-count="30">30</span><small>ans</small></div><div class="bar"><i style="--w:100%"></i></div><p>d'expérience</p></div>
+          <div><div class="v"><span data-count="7">7</span><small>j/7</small></div><div class="bar"><i style="--w:100%"></i></div><p>ouvert même le dimanche</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Trois étapes -->
+  <section class="ch ch-slides" id="etapes" style="--h:300" data-cam="etapes">
+    <div class="stick">
+      <div class="stack">
+        <div class="head-only reveal-head"><p class="label">Comment ça marche <span class="at" data-at></span></p><h2>Trois étapes, <em>sans surprise.</em></h2></div>
+        <ol class="slides" style="list-style:none;margin:0;padding:0">
+          <li class="glass slide step"><p class="n">Un</p><h3>Vous passez à la boutique.</h3><p>Sans rendez-vous, tous les jours. Pour un ourlet, pensez aux chaussures que vous porterez avec.</p></li>
+          <li class="glass slide step"><p class="n">Deux</p><h3>On épingle et on mesure.</h3><p>Vous essayez, Richard place les épingles et vous donne le prix et la date avant de commencer.</p></li>
+          <li class="glass slide step"><p class="n">Trois</p><h3>Vous revenez essayer.</h3><p>Un dernier coup d'œil devant le miroir. Un point à reprendre ? On le règle.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Les avis -->
+  <section class="ch ch-slides" id="avis" style="--h:320" data-cam="avis">
+    <div class="stick">
+      <div class="stack">
+        <div class="head-only reveal-head"><p class="label">Les avis <span class="at" data-at></span></p><h2>Ce qu'en disent <em>les clients.</em></h2></div>
+        <div class="slides">
+          <div class="glass slide">
+            <div class="score"><div class="big">4,7<small>/5</small></div><p>98 avis Google</p></div>
+            <div class="bars" aria-label="Répartition des 98 avis">
+              <div><span>5 étoiles</span><i style="--w:89.8%"></i><b>88</b></div>
+              <div><span>4 étoiles</span><i style="--w:1%"></i><b>1</b></div>
+              <div><span>3 étoiles</span><i style="--w:0%"></i><b>0</b></div>
+              <div><span>2 étoiles</span><i style="--w:3.1%"></i><b>3</b></div>
+              <div><span>1 étoile</span><i style="--w:6.1%"></i><b>6</b></div>
+            </div>
+          </div>
+          <div class="glass slide">
+            <figure class="quote"><blockquote>« Richard a sauvé ma robe, et dans un temps record. »</blockquote><figcaption>Adelaide P.</figcaption></figure>
+            <figure class="quote"><blockquote>« La veste est comme neuve. »</blockquote><figcaption>Avis Google, réparation d'une veste en cuir</figcaption></figure>
+          </div>
+          <div class="glass slide">
+            <figure class="quote"><blockquote>« Bien plus qu'un retoucheur ! »</blockquote><figcaption>Bruno L.</figcaption></figure>
+            <figure class="quote"><blockquote>« Disponible et professionnel. »</blockquote><figcaption>Bertille J. · <a class="link-more" href="https://www.google.com/maps/place/Madame+est+servie+Retouches+Paris+17/@48.8830181,2.3236666,17z" target="_blank" rel="noopener">Lire les 98 avis<span class="sr-only"> (nouvel onglet)</span></a></figcaption></figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Nous trouver -->
+  <section class="ch ch-slides" id="infos" style="--h:260" data-cam="infos">
+    <div class="stick">
+      <div class="stack">
+        <div class="slides">
+          <div class="glass slide">
+            <p class="label">Nous trouver <span class="at" data-at></span></p>
+            <h2>Passez nous voir.</h2>
+            <p class="addr">36 boulevard des Batignolles<br>75017 Paris</p>
+            <p class="muted">Métro Rome ou Place de Clichy.</p>
+            <div class="actions">
+              <a class="pill pill-tape" href="tel:+33662683147">Appeler le 06 62 68 31 47</a>
+              <a class="pill pill-ghost" href="https://www.google.com/maps/dir/?api=1&destination=Madame+est+servie+36+boulevard+des+Batignolles+75017+Paris" target="_blank" rel="noopener">Itinéraire<span class="sr-only"> (nouvel onglet)</span></a>
+            </div>
+          </div>
+          <div class="glass slide">
+            <p class="label">Horaires</p>
+            <p class="status" id="status">Horaires</p>
+            <table class="hours" id="hours">
+              <caption class="sr-only">Horaires d'ouverture</caption>
+              <tr data-d="1"><th scope="row">Lundi</th><td>10h – 18h</td></tr>
+              <tr data-d="2"><th scope="row">Mardi</th><td>10h – 18h</td></tr>
+              <tr data-d="3"><th scope="row">Mercredi</th><td>10h – 18h</td></tr>
+              <tr data-d="4"><th scope="row">Jeudi</th><td>10h – 18h</td></tr>
+              <tr data-d="5"><th scope="row">Vendredi</th><td>10h – 18h</td></tr>
+              <tr data-d="6"><th scope="row">Samedi</th><td>11h – 18h</td></tr>
+              <tr data-d="0"><th scope="row">Dimanche</th><td>11h – 18h</td></tr>
+            </table>
+            <p class="urgent"><b>Une urgence ?</b> Un rendez-vous peut être adapté à vos besoins.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Fin : le mètre est entièrement déroulé, on prend de la hauteur -->
+  <section class="ch ch-final" id="fin" style="--h:170" data-cam="fin">
+    <div class="stick center-top final">
+      <div class="reveal">
+        <h2>Vous êtes <em>servi.</em></h2>
+        <p>Passez à la boutique, on s'occupe du reste.</p>
+        <div class="actions"><a class="pill pill-tape" href="tel:+33662683147">Appeler la boutique</a></div>
+      </div>
+      <p class="addr-line">Madame est servie · 36 boulevard des Batignolles, 75017 Paris · 06 62 68 31 47</p>
+    </div>
   </section>
 </main>
 
-<footer>
-  <div class="wrap">
-    <span>Madame est servie, 36 boulevard des Batignolles, 75017 Paris</span>
-  </div>
-</footer>
-
-<canvas id="scene3d" aria-hidden="true"></canvas>
-
-<div class="callbar" id="callbar"><a class="pill pill-tape" href="tel:+33662683147"><svg class="i-phone" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>Appeler la boutique</a></div>
-
+<div class="callbar" id="callbar"><a class="pill pill-tape" href="tel:+33662683147"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>Appeler la boutique</a></div>
 <div class="demo-note">Démo non officielle, tarifs indicatifs</div>
-
-<!-- Étoiles (une seule définition) -->
-<script>
-  document.querySelectorAll('[data-stars]').forEach(function (s) {
-    s.innerHTML = new Array(6).join('<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg>');
-  });
-</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 
-<!-- Horaires : jour courant + statut ouvert / fermé (indépendant de la 3D) -->
+<!-- Étoiles + horaires (jour courant, ouvert / fermé) -->
 <script>
+  document.querySelectorAll('[data-stars]').forEach(function (s) {
+    s.innerHTML = new Array(6).join('<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg>');
+  });
   (function () {
     var now = new Date(), d = now.getDay(), m = now.getHours() * 60 + now.getMinutes();
     var row = document.querySelector('#hours tr[data-d="' + d + '"]');
     if (row) { row.classList.add('today'); row.querySelector('th').insertAdjacentHTML('beforeend', '<span class="sr-only"> (aujourd’hui)</span>'); }
     var WEEK = [[[660, 1080]], [[600, 1080]], [[600, 1080]], [[600, 1080]], [[600, 1080]], [[600, 1080]], [[660, 1080]]];
-    var slots = WEEK[d];
-    var el = document.getElementById('status'), open = null, next = null;
+    var slots = WEEK[d], el = document.getElementById('status'), open = null, next = null;
     slots.forEach(function (s) { if (m >= s[0] && m < s[1]) open = s; else if (m < s[0] && !next) next = s; });
     var h = function (x) { return Math.floor(x / 60) + 'h' + (x % 60 ? x % 60 : ''); };
     if (open) { el.textContent = 'Ouvert maintenant, jusqu’à ' + h(open[1]); el.classList.add('open'); }
-    else if (next && slots[0][1] <= m) { el.textContent = 'Pause déjeuner, réouverture à ' + h(next[0]); el.classList.add('pause'); }
     else if (next) { el.textContent = 'Ouvre aujourd’hui à ' + h(next[0]); el.classList.add('pause'); }
-    else { var jours = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'], k = 1; while (!WEEK[(d + k) % 7].length) k++; var nd = (d + k) % 7; el.textContent = 'Fermé, réouverture ' + (k === 1 ? 'demain' : jours[nd]) + ' à ' + h(WEEK[nd][0][0]); el.classList.add('closed'); }
+    else { var jours = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'], nd = (d + 1) % 7; el.textContent = 'Fermé, réouverture demain à ' + h(WEEK[nd][0][0]); el.classList.add('closed'); }
   })();
 </script>
 
-<!-- Animations au scroll (GSAP + ScrollTrigger + Lenis) -->
+<!-- Chapitres : chaque section apparaît pendant que le mètre se déroule (GSAP + ScrollTrigger + Lenis) -->
 <script>
   window.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  window.heroState = { p: 0 }; // progression du déroulé du ruban, lue par la scène 3D
-
   (function () {
-    if (!window.gsap || !window.ScrollTrigger) { document.getElementById('statement').parentNode.parentNode.classList.add('static'); return; }
+    if (!window.gsap || !window.ScrollTrigger) return;          // sans GSAP : page classique, tout reste lisible
+    document.documentElement.classList.add('js');
     gsap.registerPlugin(ScrollTrigger);
 
-    // Défilement fluide
+    var lenis = null;
     if (!reduceMotion && window.Lenis) {
-      var lenis = new Lenis({ lerp: 0.16, wheelMultiplier: 1 });
+      lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9 });
       lenis.on('scroll', ScrollTrigger.update);
       gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
       gsap.ticker.lagSmoothing(0);
-      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-        a.addEventListener('click', function (e) {
-          var id = a.getAttribute('href'); if (id.length < 2) return;
-          var t = document.querySelector(id); if (!t) return;
-          e.preventDefault(); lenis.scrollTo(t, { offset: -56 });
-        });
-      });
     }
+    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var id = a.getAttribute('href'); if (id.length < 2) return;
+        var t = id === '#top' ? 0 : document.querySelector(id); if (t === null) return;
+        e.preventDefault();
+        var y = t === 0 ? 0 : t.offsetTop + window.innerHeight * 0.05;
+        if (lenis) lenis.scrollTo(y, { duration: 2.2 }); else window.scrollTo(0, y);
+      });
+    });
 
-    // Découpe du texte en mots pour l'effet d'éclairage
+    // mots de la phrase de l'atelier
     var st = document.getElementById('statement');
     st.innerHTML = st.textContent.split(' ').map(function (w) { return '<span class="w">' + w + '</span>'; }).join(' ');
 
-    var mm = gsap.matchMedia();
-
-    mm.add('(prefers-reduced-motion: no-preference)', function () {
-      // 1. Hero épinglé : le ruban se déroule, le titre laisse place à la note
-      var tl = gsap.timeline({
-        scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=140%', scrub: 0.4, pin: true, anticipatePin: 1,
-          onToggle: function (self) { document.getElementById('nav').classList.toggle('on-hero', self.isActive || self.progress === 0); } }
-      });
-      tl.to(heroState, { p: 1, ease: 'none', duration: 1 }, 0)
-        .to('#heroCopy', { yPercent: -30, autoAlpha: 0, ease: 'power1.in', duration: 0.42 }, 0.05)
-        .fromTo('#heroStats', { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.35 }, 0.55);
-
-      // 2. Les mots s'éclairent un à un
-      gsap.to('#statement .w', {
-        opacity: 1, ease: 'none', stagger: 0.1,
-        scrollTrigger: { trigger: '.statement', start: 'top 70%', end: 'bottom 60%', scrub: true }
-      });
-
-      // 4. Barres des chiffres
-      gsap.from('.num-bar i', { scaleX: 0, duration: 1.2, ease: 'power3.out', stagger: 0.12,
-        scrollTrigger: { trigger: '.numbers', start: 'top 75%' } });
-
-      // 5. Étapes : celle au centre de l'écran s'allume
-      gsap.utils.toArray('.step').forEach(function (s) {
-        gsap.fromTo(s, { opacity: 0.25 }, { opacity: 1, ease: 'none',
-          scrollTrigger: { trigger: s, start: 'top 75%', end: 'top 45%', scrub: true } });
-      });
-    });
-
-    // 3. Galerie horizontale épinglée (grands écrans seulement)
-    mm.add('(min-width: 901px) and (prefers-reduced-motion: no-preference)', function () {
-      var track = document.getElementById('track');
-      var dist = function () { return Math.max(0, track.scrollWidth - window.innerWidth); };
-      gsap.to(track, {
-        x: function () { return -dist(); }, ease: 'none',
-        scrollTrigger: { trigger: '#services', start: 'top top', end: function () { return '+=' + dist(); }, scrub: 0.4, pin: true, invalidateOnRefresh: true }
-      });
-    });
-
-    mm.add('(prefers-reduced-motion: reduce)', function () {
-      document.querySelector('.statement').classList.add('static');
-      heroState.p = 0.35;
-    });
-
-    // Barre d'appel mobile : apparaît après le haut de page, disparaît sur l'appel final
-    var bar = document.getElementById('callbar');
-    if (bar) {
-      var heroOut = false, finalIn = false;
-      var upd = function () { bar.classList.toggle('show', heroOut && !finalIn); };
-      new IntersectionObserver(function (e) { heroOut = !e[0].isIntersecting; upd(); }, { threshold: 0.15 }).observe(document.getElementById('hero'));
-      new IntersectionObserver(function (e) { finalIn = e[0].isIntersecting; upd(); }).observe(document.querySelector('.final'));
+    var IN = 0.16, OUT = 0.16;
+    function show(tl, el, at, len, first, last) {
+      if (!first) tl.fromTo(el, { autoAlpha: 0, y: 50 }, { autoAlpha: 1, y: 0, duration: len * IN, ease: 'power2.out' }, at);
+      if (!last) tl.to(el, { autoAlpha: 0, y: -50, duration: len * OUT, ease: 'power2.in' }, at + len * (1 - OUT));
     }
 
-    // recalcul des positions une fois la police chargée (évite les décalages)
-    document.fonts && document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
+    document.querySelectorAll('.ch').forEach(function (sec) {
+      var stick = sec.querySelector('.stick');
+      var hero = sec.classList.contains('ch-hero'), fin = sec.classList.contains('ch-final');
+      var tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
+        trigger: sec, start: hero ? 'top top' : 'top center', end: fin ? 'bottom bottom' : 'bottom center', scrub: true } });
+      tl.set(stick, { autoAlpha: 1 }, 0).to({}, { duration: 1 }, 0);       // durée totale = 1
+      if (!fin) tl.set(stick, { autoAlpha: 0 }, 1);
 
-    // Compteurs (une fois, à l'entrée)
-    document.querySelectorAll('[data-count]').forEach(function (el) {
-      var end = parseFloat(el.dataset.count), dec = parseInt(el.dataset.dec || '0', 10);
-      if (reduceMotion) return;
-      var o = { v: 0 };
-      ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: function () {
-        gsap.to(o, { v: end, duration: 1.4, ease: 'power3.out', onUpdate: function () {
-          el.textContent = o.v.toFixed(dec).replace('.', ',');
-        } });
-      } });
+      if (sec.classList.contains('ch-slides')) {
+        var heads = sec.querySelectorAll('.reveal-head'), slides = sec.querySelectorAll('.slide'), k = slides.length;
+        heads.forEach(function (h) { show(tl, h, 0, 1); });
+        slides.forEach(function (s, j) {
+          var len = 1 / k, at = j * len;
+          gsap.set(s, { autoAlpha: 0 });
+          show(tl, s, at, len, false, false);
+          var price = s.querySelector('[data-price]');
+          if (price && !reduceMotion) {
+            var o = { v: 0 }, end = +price.dataset.price;
+            tl.fromTo(o, { v: 0 }, { v: end, duration: len * 0.3, ease: 'power2.out', onUpdate: function () { price.textContent = Math.round(o.v) + ' €'; } }, at + len * 0.08);
+          }
+        });
+      } else {
+        var r = sec.querySelector('.reveal');
+        if (r) show(tl, r, 0, 1, hero, fin);
+        if (hero) tl.to(stick, { autoAlpha: 0, y: -60, duration: 0.3, ease: 'power2.in' }, 0.7);
+      }
+      if (sec.classList.contains('statement') && !reduceMotion) {
+        tl.to(sec.querySelectorAll('.w'), { opacity: 1, stagger: 0.012, duration: 0.05 }, 0.15);
+      }
+      if (sec.id === 'chiffres' && !reduceMotion) {
+        sec.querySelectorAll('[data-count]').forEach(function (el) {
+          var end = parseFloat(el.dataset.count), dec = +(el.dataset.dec || 0), o = { v: 0 };
+          tl.fromTo(o, { v: 0 }, { v: end, duration: 0.3, ease: 'power2.out', onUpdate: function () { el.textContent = o.v.toFixed(dec).replace('.', ','); } }, 0.1);
+        });
+        tl.from(sec.querySelectorAll('.bar i'), { scaleX: 0, duration: 0.3, stagger: 0.04, ease: 'power2.out' }, 0.1);
+      }
     });
+
+    // barre d'appel mobile : visible après l'accueil
+    var bar = document.getElementById('callbar');
+    ScrollTrigger.create({ trigger: '#note', start: 'top center', endTrigger: '#fin', end: 'top center',
+      onToggle: function (self) { bar.classList.toggle('show', self.isActive); } });
+
+    document.fonts && document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
+    window.chapters = { refresh: function () { ScrollTrigger.refresh(); } };
   })();
 </script>
 
-<!-- Scène 3D : le mètre ruban (Three.js) -->
-<script type="module">
-  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-
-  const canvas = document.getElementById('tape3d');
-  const hero = document.getElementById('hero');
-  let renderer;
-  try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-  } catch (e) {
-    document.documentElement.classList.add('no-webgl');
-    canvas.remove();
-    throw e;
-  }
-  const small = window.matchMedia('(max-width: 760px)').matches;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, small ? 1.25 : 1.5));
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-  camera.position.set(0, 0, 14);
-
-  // Lumières : clé chaude, contre-jour cuivré, ambiance cognac
-  const css = getComputedStyle(document.documentElement);
-  scene.add(new THREE.HemisphereLight(0xfaf6ee, new THREE.Color(css.getPropertyValue('--light-ground').trim() || '#1a2550'), 1.1));
-  scene.add(new THREE.AmbientLight(0xfff1cc, 0.55)); // éclaire l'arrière de la boucle
-  const key = new THREE.DirectionalLight(0xfff3d6, 2.4); key.position.set(4, 6, 8); scene.add(key);
-  const rim = new THREE.DirectionalLight(new THREE.Color(css.getPropertyValue('--light-rim').trim() || '#8fa8ff'), 1.6); rim.position.set(-6, -2, -6); scene.add(rim);
-
-  // ----- Texture du ruban dessinée en canvas -----
-  const CM = 60;                       // le ruban montre 60 cm
-  const TW = 4096, TH = 120;
-  function drawTape(ctx) {
-    const pxcm = TW / CM;
-    const g = ctx.createLinearGradient(0, 0, 0, TH);
-    g.addColorStop(0, '#E9B51E'); g.addColorStop(0.08, '#F6C833'); g.addColorStop(0.92, '#F4C430'); g.addColorStop(1, '#DDA716');
-    ctx.fillStyle = g; ctx.fillRect(0, 0, TW, TH);
-    ctx.fillStyle = '#14161E';
-    for (let mm = 0; mm <= CM * 10; mm++) {
-      const x = mm * pxcm / 10;
-      const h = mm % 10 === 0 ? 46 : mm % 5 === 0 ? 32 : 18;
-      ctx.fillRect(Math.round(x), 0, mm % 10 === 0 ? 3 : 2, h);
-    }
-    ctx.font = '600 34px Geist, system-ui, sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-    for (let c = 1; c < CM; c++) ctx.fillText(String(c), c * pxcm, 100);
-    // repère rouge au milieu du ruban : il s'arrête pile sous la note une fois déroulé
-    ctx.fillStyle = '#D2283C'; ctx.fillRect(Math.round(30 * pxcm) - 3, 0, 6, TH);
-    // marque imprimée au début du ruban
-    ctx.fillStyle = '#D2283C'; ctx.fillRect(0, 0, 18, TH);
-  }
-  const tc = document.createElement('canvas'); tc.width = TW; tc.height = TH;
-  const tctx = tc.getContext('2d');
-  drawTape(tctx);
-  const tex = new THREE.CanvasTexture(tc);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-  document.fonts && document.fonts.load('600 34px Geist').then(() => { drawTape(tctx); tex.needsUpdate = true; });
-
-  // ----- Géométrie du ruban : une bande déformée à chaque image -----
-  const N = small ? 200 : 360;         // segments le long du ruban
-  const L = 26, W = 0.76;              // longueur et largeur (unités 3D)
-  const pos = new Float32Array((N + 1) * 2 * 3);
-  const uv = new Float32Array((N + 1) * 2 * 2);
-  const idx = [];
-  for (let i = 0; i <= N; i++) {
-    uv.set([i / N, 0, i / N, 1], i * 4);
-    if (i < N) { const a = i * 2, b = a + 1, c = a + 2, d = a + 3; idx.push(a, c, b, b, c, d); }
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage));
-  geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
-  geo.setIndex(idx);
-  // imprimé des deux côtés, comme un vrai mètre de couturière : le dos est retourné pour rester lisible
-  const texBack = tex.clone();
-  texBack.wrapS = THREE.RepeatWrapping; texBack.repeat.x = -1; texBack.offset.x = 1;
-  document.fonts && document.fonts.ready.then(() => { texBack.needsUpdate = true; });
-  const mat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.42, metalness: 0.0, side: THREE.FrontSide });
-  const back = new THREE.MeshStandardMaterial({ map: texBack, roughness: 0.46, metalness: 0.0, side: THREE.BackSide });
-  const tape = new THREE.Mesh(geo, mat);
-  const tapeBack = new THREE.Mesh(geo, back);
-  const group = new THREE.Group(); group.add(tape, tapeBack); scene.add(group);
-
-  const P = new THREE.Vector3(), Pn = new THREE.Vector3(), T = new THREE.Vector3(), Nrm = new THREE.Vector3(), K = new THREE.Vector3();
-  const UP = new THREE.Vector3(0, 1, 0);
-  const smooth = (e0, e1, x) => { const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
-
-  // position d'un point du ruban (s de 0 à 1) au temps t, déroulé p
-  function pathAt(s, t, p, out) {
-    const q = smooth(0, 1, p * 1.45 - (1 - s) * 0.45); // déroulé fluide
-    const th = s * Math.PI * 2 * 1.55 + t * 0.05;
-    const R = 2.5;
-    const cx = Math.cos(th) * R * 1.45;
-    const cy = (s - 0.5) * 2.3 + Math.sin(th * 0.5 + t * 0.25) * 0.5 - 2.3;
-    const cz = Math.sin(th) * R - 1.2;
-    const sx = (s - 0.5) * L, sy = -1.4 + (s - 0.5) * -0.6, sz = 0;
-    const f = 1 - q * 0.85;
-    out.set(
-      cx + (sx - cx) * q,
-      cy + (sy - cy) * q + Math.sin(t * 0.55 + s * 6) * 0.11 * f,
-      cz + (sz - cz) * q + Math.cos(t * 0.45 + s * 5) * 0.12 * f
-    );
-    return q;
-  }
-
-  // points du ruban calculés une seule fois par image, tangentes déduites des voisins
-  const pts = new Float32Array((N + 1) * 3), qs = new Float32Array(N + 1);
-  function updateTape(t, p) {
-    for (let i = 0; i <= N; i++) {
-      qs[i] = pathAt(i / N, t, p, P);
-      pts[i * 3] = P.x; pts[i * 3 + 1] = P.y; pts[i * 3 + 2] = P.z;
-    }
-    for (let i = 0; i <= N; i++) {
-      const s = i / N, q = qs[i];
-      const a = Math.max(0, i - 1) * 3, b = Math.min(N, i + 1) * 3;
-      P.set(pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2]);
-      T.set(pts[b] - pts[a], pts[b + 1] - pts[a + 1], pts[b + 2] - pts[a + 2]).normalize();
-      Nrm.copy(UP).addScaledVector(T, -T.dot(UP));
-      if (Nrm.lengthSq() < 1e-4) Nrm.set(0, 0, 1);
-      Nrm.normalize();
-      // torsion autour de la tangente (formule de Rodrigues, Nrm ⟂ T)
-      const phi = (1 - q) * (s * Math.PI * 2 * 0.8 + Math.sin(t * 0.3 + s * 2) * 0.3); // torsion visible mais douce, sans rotation continue
-      K.crossVectors(T, Nrm);
-      Nrm.multiplyScalar(Math.cos(phi)).addScaledVector(K, Math.sin(phi));
-      const o = i * 6, hw = W / 2;
-      pos[o] = P.x - Nrm.x * hw; pos[o + 1] = P.y - Nrm.y * hw; pos[o + 2] = P.z - Nrm.z * hw;
-      pos[o + 3] = P.x + Nrm.x * hw; pos[o + 4] = P.y + Nrm.y * hw; pos[o + 5] = P.z + Nrm.z * hw;
-    }
-    geo.attributes.position.needsUpdate = true;
-    geo.computeVertexNormals();
-  }
-
-  // Taille
-  function resize() {
-    const w = hero.clientWidth, h = hero.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    // sur écran étroit, on recule pour garder le ruban dans le cadre
-    camera.position.z = w / h < 0.8 ? 21 : 14;
-    camera.updateProjectionMatrix();
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // Parallaxe au pointeur
-  const pointer = { x: 0, y: 0 };
-  // parallaxe seulement avec une souris (sur téléphone, le doigt le ferait sauter)
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) window.addEventListener('pointermove', (e) => {
-    pointer.x = e.clientX / window.innerWidth - 0.5;
-    pointer.y = e.clientY / window.innerHeight - 0.5;
-  }, { passive: true });
-
-  // Faire tourner le mètre au doigt ou à la souris (avec inertie, retour doux de face)
-  const drag = { on: false, x: 0, y: 0, spin: 0, tilt: 0, vel: 0 };
-  const hint = document.getElementById('dragHint');
-  canvas.addEventListener('pointerdown', (e) => {
-    drag.on = true; drag.x = e.clientX; drag.y = e.clientY; drag.vel = 0;
-    canvas.setPointerCapture(e.pointerId); canvas.classList.add('grabbing');
-    if (hint) hint.classList.add('gone');
-  });
-  canvas.addEventListener('pointermove', (e) => {
-    if (!drag.on) return;
-    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    drag.x = e.clientX; drag.y = e.clientY;
-    drag.vel = dx * 0.009; drag.spin += drag.vel;
-    drag.tilt = Math.max(-0.5, Math.min(0.5, drag.tilt + dy * 0.004));
-  });
-  const release = () => { drag.on = false; canvas.classList.remove('grabbing'); };
-  canvas.addEventListener('pointerup', release);
-  canvas.addEventListener('pointercancel', release);
-
-  // Ne rendre que si le hero est visible
-  let visible = true;
-  new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(hero);
-
-  const reduce = window.reduceMotion;
-  const clock = new THREE.Clock();
-  function frame() {
-    if (!visible || document.hidden) return;
-    const t = reduce ? 0 : clock.getElapsedTime();
-    const shownP = window.heroState ? window.heroState.p : 0; // déjà lissé par le scrub GSAP
-    updateTape(t, shownP);
-    if (!drag.on) {                       // inertie puis retour doux vers la face
-      drag.spin += drag.vel; drag.vel *= 0.93;
-      if (Math.abs(drag.vel) < 0.002) drag.spin += (Math.round(drag.spin / (Math.PI * 2)) * Math.PI * 2 - drag.spin) * 0.03;
-      drag.tilt *= 0.95;
-    }
-    const free = 1 - shownP;              // une fois déroulé, le mètre reste à plat
-    const ty = drag.spin * free + (reduce ? 0 : pointer.x * 0.14) * (1 - shownP * 0.7);
-    const tx = 0.18 * free + drag.tilt * free + (reduce ? 0 : pointer.y * 0.08) * (1 - shownP * 0.7);
-    group.rotation.y += (ty - group.rotation.y) * (drag.on ? 0.35 : 0.08);
-    group.rotation.x += (tx - group.rotation.x) * 0.08;
-    if (hint && shownP > 0.05) hint.classList.add('gone');
-    group.rotation.z = -0.05 * shownP;
-    renderer.render(scene, camera);
-    if (!canvas.classList.contains('ready')) canvas.classList.add('ready');
-  }
-  // même horloge que le scroll (GSAP + Lenis) pour éviter le décalage d'une image
-  if (window.gsap) gsap.ticker.add(frame);
-  else (function loop() { requestAnimationFrame(loop); frame(); })();
-</script>
-
-<!-- Objets 3D de l'atelier (bobine, bouton, boucle, dé à coudre) : un seul rendu WebGL, dessiné dans chaque emplacement -->
+<!-- Le monde 3D : un mètre ruban qui roule et se déroule tout au long du site (Three.js) -->
 <script type="module">
   import * as THREE from 'three';
   import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
-  const canvas = document.getElementById('scene3d');
-  const slotEls = [...document.querySelectorAll('[data-obj]')];
+  const canvas = document.getElementById('world');
   let renderer;
-  try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  } catch (e) { canvas.remove(); throw e; }
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); }
+  catch (e) { canvas.remove(); throw e; }
   const small = window.matchMedia('(max-width: 760px)').matches;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, small ? 1.5 : 1.75));
+  const reduce = window.reduceMotion;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, small ? 1.4 : 1.6));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.0;
-  renderer.setClearColor(0x000000, 0);
-  renderer.setScissorTest(true);
+  renderer.toneMappingExposure = 1.05;
+  const BG = new THREE.Color('#22160F');
+  renderer.setClearColor(BG, 1);
 
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(BG, 14, 46);
   const pmrem = new THREE.PMREMGenerator(renderer);
-  const env = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
-  const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50);
-  camera.position.set(0, 0, 7);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 200);
 
-  const COGNAC = '#B4692C';
-  function canvasTex(w, h, draw, srgb = true) {
-    const c = document.createElement('canvas'); c.width = w; c.height = h;
-    draw(c.getContext('2d'), w, h);
-    const t = new THREE.CanvasTexture(c);
-    if (srgb) t.colorSpace = THREE.SRGBColorSpace;
-    t.anisotropy = 4;
+  scene.add(new THREE.HemisphereLight(0xfff3e2, 0x3a2416, 0.9));
+  const key = new THREE.DirectionalLight(0xfff0d8, 2.3); key.position.set(6, 12, 6); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffb98a, 1.0); rim.position.set(-8, 4, -10); scene.add(rim);
+
+  const UP = new THREE.Vector3(0, 1, 0);
+
+  // ----- Le sol : une toile de lin sombre -----
+  const linen = (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d');
+    g.fillStyle = '#2b1c13'; g.fillRect(0, 0, 256, 256);
+    for (let i = 0; i < 256; i += 2) {
+      g.fillStyle = 'rgba(255,230,200,' + (0.025 + Math.random() * 0.03) + ')'; g.fillRect(0, i, 256, 1);
+      g.fillStyle = 'rgba(0,0,0,' + (0.05 + Math.random() * 0.05) + ')'; g.fillRect(i, 0, 1, 256);
+    }
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(90, 90); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
     return t;
+  })();
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshStandardMaterial({ map: linen, roughness: 1, metalness: 0, envMapIntensity: 0.2 }));
+  floor.rotation.x = -Math.PI / 2; floor.position.set(0, 0, -40); scene.add(floor);
+
+  // ----- Le chemin du mètre : une grande courbe douce posée sur le sol -----
+  const ctrl = [];
+  for (let k = 0; k <= 11; k++) ctrl.push(new THREE.Vector3(Math.sin(k * 1.05) * 3.4, 0, -k * 6.6));
+  const path = new THREE.CatmullRomCurve3(ctrl, false, 'centripetal');
+  path.arcLengthDivisions = 3000;
+  const L = path.getLength();
+  const UNIT_PER_CM = 0.43;
+  const CM = Math.round(L / UNIT_PER_CM);
+  const W = 0.76, HW = W / 2;
+
+  // ----- Texture du ruban : CM centimètres, imprimée des deux côtés -----
+  const TW = Math.min(8192, renderer.capabilities.maxTextureSize), TH = 128;
+  const tc = document.createElement('canvas'); tc.width = TW; tc.height = TH;
+  const tx = tc.getContext('2d');
+  function drawTape() {
+    const pxcm = TW / CM;
+    const g = tx.createLinearGradient(0, 0, 0, TH);
+    g.addColorStop(0, '#E9B51E'); g.addColorStop(0.08, '#F6C833'); g.addColorStop(0.92, '#F4C430'); g.addColorStop(1, '#DDA716');
+    tx.fillStyle = g; tx.fillRect(0, 0, TW, TH);
+    tx.fillStyle = '#14161E';
+    for (let mm = 0; mm <= CM * 10; mm++) {
+      const x = mm * pxcm / 10, h = mm % 10 === 0 ? 46 : mm % 5 === 0 ? 30 : 16;
+      tx.fillRect(Math.round(x), 0, mm % 10 === 0 ? 3 : 1.5, h);
+    }
+    tx.font = '600 ' + Math.min(34, pxcm * 0.62) + 'px Geist, system-ui, sans-serif';
+    tx.textAlign = 'center'; tx.textBaseline = 'alphabetic';
+    for (let c = 1; c < CM; c++) tx.fillText(String(c), c * pxcm, 104);
+    tx.fillStyle = '#D2283C'; tx.fillRect(0, 0, 16, TH); tx.fillRect(TW - 16, 0, 16, TH);
   }
+  drawTape();
+  const tex = new THREE.CanvasTexture(tc); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const texBack = tex.clone(); texBack.wrapS = THREE.RepeatWrapping; texBack.repeat.x = -1; texBack.offset.x = 1;
+  document.fonts && document.fonts.load('600 34px Geist').then(() => { drawTape(); tex.needsUpdate = true; texBack.needsUpdate = true; });
+
+  // ----- Géométrie du ruban : précalcul du tracé au sol -----
+  const N = small ? 1500 : 2400;
+  const du = L / N;
+  const FP = new Float32Array((N + 1) * 3), FB = new Float32Array((N + 1) * 3), FT = new Float32Array((N + 1) * 3);
+  { const p = new THREE.Vector3(), t = new THREE.Vector3(), b = new THREE.Vector3();
+    for (let i = 0; i <= N; i++) {
+      const s = i / N; path.getPointAt(s, p); path.getTangentAt(s, t);
+      b.crossVectors(t, UP).normalize();
+      FP.set([p.x, p.y, p.z], i * 3); FT.set([t.x, t.y, t.z], i * 3); FB.set([b.x, b.y, b.z], i * 3);
+    } }
+  const pos = new Float32Array((N + 1) * 6), uv = new Float32Array((N + 1) * 4), idx = [];
+  for (let i = 0; i <= N; i++) { uv.set([i / N, 0, i / N, 1], i * 4); if (i < N) { const a = i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); } }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage));
+  geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  geo.setIndex(idx);
+  const front = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.45, side: THREE.FrontSide, envMapIntensity: 0.35, polygonOffset: true, polygonOffsetFactor: -2 });
+  const back = new THREE.MeshStandardMaterial({ map: texBack, roughness: 0.5, side: THREE.BackSide, envMapIntensity: 0.35, polygonOffset: true, polygonOffsetFactor: -2 });
+  const tape = new THREE.Group(); tape.add(new THREE.Mesh(geo, front), new THREE.Mesh(geo, back)); scene.add(tape);
+  tape.children.forEach((m) => { m.frustumCulled = false; });
+
+  // ombre douce sous le rouleau
+  const blob = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, opacity: 0.55,
+    map: (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); const r = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+      r.addColorStop(0, 'rgba(0,0,0,.9)'); r.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = r; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })() }));
+  blob.rotation.x = -Math.PI / 2; scene.add(blob);
+
+  const floorAt = (u, out) => {         // point du tracé à l'abscisse u (interpolé)
+    const f = Math.min(N - 1e-6, Math.max(0, u / du)), i = Math.floor(f), a = f - i, j = i * 3, k = j + 3;
+    return out.set(FP[j] + (FP[k] - FP[j]) * a, 0, FP[j + 2] + (FP[k + 2] - FP[j + 2]) * a);
+  };
+  const vecAt = (arr, u, out) => { const i = Math.min(N, Math.max(0, Math.round(u / du))) * 3; return out.set(arr[i], arr[i + 1], arr[i + 2]); };
+
+  const SPACING = 0.028, RIN = 0.26, LIFT = 0.012;
+  const C = new THREE.Vector3(), Tc = new THREE.Vector3(), Bc = new THREE.Vector3();
+  let rollR = 0;
+  // U = longueur déroulée. Le reste est enroulé : le rouleau avance en roulant, comme un tapis qu'on déroule.
+  function updateTape(U) {
+    const rest = L - U;
+    const Ro = Math.sqrt(RIN * RIN + rest * SPACING / Math.PI);
+    rollR = rest > 0.01 ? Ro : 0;
+    floorAt(U, C); vecAt(FT, U, Tc); vecAt(FB, U, Bc);
+    C.addScaledVector(UP, Ro);
+    let theta = 0, prev = U;
+    for (let i = 0; i <= N; i++) {
+      const u = i * du, o = i * 6;
+      let px, py, pz, bx, by, bz;
+      if (u <= U) {
+        const j = i * 3; px = FP[j]; py = LIFT; pz = FP[j + 2]; bx = FB[j]; by = FB[j + 1]; bz = FB[j + 2];
+      } else {
+        const s = u - U;
+        const R = Math.sqrt(Math.max(RIN * RIN * 0.6, Ro * Ro - s * SPACING / Math.PI));
+        theta += (u - prev) / R; prev = u;
+        const sn = Math.sin(theta) * R, cs = -Math.cos(theta) * R;
+        px = C.x + Tc.x * sn; py = C.y + cs; pz = C.z + Tc.z * sn;
+        bx = Bc.x; by = Bc.y; bz = Bc.z;
+      }
+      pos[o] = px - bx * HW; pos[o + 1] = py - by * HW; pos[o + 2] = pz - bz * HW;
+      pos[o + 3] = px + bx * HW; pos[o + 4] = py + by * HW; pos[o + 5] = pz + bz * HW;
+    }
+    geo.attributes.position.needsUpdate = true;
+    geo.computeVertexNormals();
+    blob.position.set(C.x, 0.004, C.z); blob.scale.setScalar(Math.max(0.001, rollR * 3.4));
+  }
+
+  // ----- Les objets de l'atelier, posés au bord du mètre (un par carte de prix) -----
+  const COGNAC = '#B4692C';
   const threadMat = new THREE.MeshStandardMaterial({ color: COGNAC, roughness: 0.8 });
   const steel = new THREE.MeshStandardMaterial({ color: 0xe4e4e8, metalness: 1, roughness: 0.18 });
-
-  // ---------- Bobine de fil traversée d'une aiguille ----------
-  function makeSpool(color = COGNAC) {
+  function canvasTex(w, h, draw, srgb = true) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; }
+  function makeSpool() {
     const g = new THREE.Group();
-    const wood = new THREE.MeshStandardMaterial({ color: 0xD7AC7E, roughness: 0.55 });
-    const dark = new THREE.MeshStandardMaterial({ color: 0x2a1a10, roughness: 0.9 });
+    const wood = new THREE.MeshStandardMaterial({ color: 0xD7AC7E, roughness: 0.55 }), dark = new THREE.MeshStandardMaterial({ color: 0x2a1a10, roughness: 0.9 });
     const endGeo = new THREE.CylinderGeometry(1, 1, 0.2, 64);
-    [0.95, -0.95].forEach((y) => {
-      const end = new THREE.Mesh(endGeo, wood); end.position.y = y; g.add(end);
-      const hole = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.205, 24), dark); hole.position.y = y; g.add(hole);
-    });
-    const map = canvasTex(32, 512, (c, w, h) => {
-      c.fillStyle = color; c.fillRect(0, 0, w, h);
-      for (let y = 0; y < h; y += 3) { c.fillStyle = 'rgba(0,0,0,' + (0.12 + Math.random() * 0.12) + ')'; c.fillRect(0, y, w, 1); }
-      c.fillStyle = 'rgba(255,255,255,.10)'; for (let y = 1; y < h; y += 6) c.fillRect(0, y, w, 1);
-    });
-    const thread = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 1.7, 72, 1, true),
-      new THREE.MeshStandardMaterial({ map, roughness: 0.78, bumpMap: map, bumpScale: 1.2 }));
-    g.add(thread);
-    // aiguille
+    [0.95, -0.95].forEach((y) => { const e = new THREE.Mesh(endGeo, wood); e.position.y = y; g.add(e); const h = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.205, 24), dark); h.position.y = y; g.add(h); });
+    const map = canvasTex(32, 512, (c, w, h) => { c.fillStyle = COGNAC; c.fillRect(0, 0, w, h); for (let y = 0; y < h; y += 3) { c.fillStyle = 'rgba(0,0,0,' + (0.12 + Math.random() * 0.12) + ')'; c.fillRect(0, y, w, 1); } });
+    g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 1.7, 72, 1, true), new THREE.MeshStandardMaterial({ map, roughness: 0.78, bumpMap: map, bumpScale: 1.2 })));
     const needle = new THREE.Group();
-    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 2.4, 12), steel);
-    const tip = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.32, 12), steel); tip.position.y = -1.36; tip.rotation.x = Math.PI;
-    const eye = new THREE.Mesh(new THREE.TorusGeometry(0.055, 0.018, 8, 20), steel); eye.position.y = 1.24; eye.scale.y = 2.2;
-    needle.add(shaft, tip, eye);
-    needle.position.set(0.55, 0.2, 0.55); needle.rotation.set(0.3, 0, -0.6);
-    g.add(needle);
+    needle.add(new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 2.4, 12), steel));
+    const tip = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.32, 12), steel); tip.position.y = -1.36; tip.rotation.x = Math.PI; needle.add(tip);
+    const eye = new THREE.Mesh(new THREE.TorusGeometry(0.055, 0.018, 8, 20), steel); eye.position.y = 1.24; eye.scale.y = 2.2; needle.add(eye);
+    needle.position.set(0.55, 0.2, 0.55); needle.rotation.set(0.3, 0, -0.6); g.add(needle);
     g.updateMatrixWorld(true);
     const e = eye.getWorldPosition(new THREE.Vector3());
-    const curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.78, -0.35, 0.12), new THREE.Vector3(1.35, -0.2, 0.55),
-      new THREE.Vector3(1.45, 0.75, 0.75), e
-    ]);
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 48, 0.018, 6), threadMat));
-    return g;
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(0.78, -0.35, 0.12), new THREE.Vector3(1.35, -0.2, 0.55), new THREE.Vector3(1.45, 0.75, 0.75), e]), 48, 0.018, 6), threadMat));
+    return { g, lift: 1.05 };
   }
-
-  // ---------- Bouton à quatre trous, cousu ----------
-  function makeButton(color = 0xEADBC4, threadColor = COGNAC) {
+  function makeButton() {
     const g = new THREE.Group();
     const s = new THREE.Shape(); s.absarc(0, 0, 1, 0, Math.PI * 2, false);
-    const H = [[0.27, 0.27], [-0.27, 0.27], [0.27, -0.27], [-0.27, -0.27]];
-    H.forEach(([x, y]) => { const h = new THREE.Path(); h.absarc(x, y, 0.12, 0, Math.PI * 2, true); s.holes.push(h); });
-    const geo = new THREE.ExtrudeGeometry(s, { depth: 0.16, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.07, bevelSegments: 5, curveSegments: 56 });
-    geo.center();
-    const mat = new THREE.MeshPhysicalMaterial({ color, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.12 });
-    g.add(new THREE.Mesh(geo, mat));
-    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.8, 0.06, 14, 72), mat); rim.position.z = 0.17; g.add(rim);
-    const tm = new THREE.MeshStandardMaterial({ color: threadColor, roughness: 0.8 });
-    [Math.PI / 4, -Math.PI / 4].forEach((a) => {
-      const st = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.8, 10), tm);
-      st.rotation.z = a; st.position.z = 0.2; g.add(st);
-    });
-    return g;
+    [[0.27, 0.27], [-0.27, 0.27], [0.27, -0.27], [-0.27, -0.27]].forEach(([x, y]) => { const h = new THREE.Path(); h.absarc(x, y, 0.12, 0, Math.PI * 2, true); s.holes.push(h); });
+    const bg = new THREE.ExtrudeGeometry(s, { depth: 0.16, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.07, bevelSegments: 5, curveSegments: 56 }); bg.center();
+    const mat = new THREE.MeshPhysicalMaterial({ color: 0xEADBC4, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.12 });
+    g.add(new THREE.Mesh(bg, mat));
+    const rimm = new THREE.Mesh(new THREE.TorusGeometry(0.8, 0.06, 14, 72), mat); rimm.position.z = 0.17; g.add(rimm);
+    [Math.PI / 4, -Math.PI / 4].forEach((a) => { const st = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.8, 10), threadMat); st.rotation.z = a; st.position.z = 0.2; g.add(st); });
+    return { g, lift: 1.08 };
   }
-  function makeButtons() {
-    const g = new THREE.Group();
-    const a = makeButton(0xEADBC4); a.position.set(-0.35, 0.3, 0.3);
-    const b = makeButton(0xB4692C, '#F3E6D3'); b.scale.setScalar(0.72); b.position.set(0.75, -0.55, -0.4); b.rotation.set(0.4, -0.6, 0.3);
-    g.add(a, b);
-    return g;
-  }
-
-  // ---------- Boucle de ceinture dorée et sa lanière en cuir ----------
   function rrShape(w, h, r) {
     const s = new THREE.Shape(), x = -w / 2, y = -h / 2;
-    s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
-    s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r);
-    s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y);
-    return s;
+    s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r); s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r); s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y); return s;
   }
   function makeBuckle() {
     const g = new THREE.Group();
     const gold = new THREE.MeshStandardMaterial({ color: 0xDDA85F, metalness: 1, roughness: 0.24 });
-    const outer = rrShape(2.1, 1.6, 0.42);
-    outer.holes.push(new THREE.Path(rrShape(1.55, 1.05, 0.2).getPoints(10).reverse()));
-    const fgeo = new THREE.ExtrudeGeometry(outer, { depth: 0.12, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 4, curveSegments: 16 });
-    fgeo.center();
-    const frame = new THREE.Mesh(fgeo, gold); frame.position.x = 0.55; g.add(frame);
-    const prong = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 1.75, 14), gold);
-    prong.rotation.z = Math.PI / 2; prong.position.set(0.5, 0, 0.16); g.add(prong);
-    const leather = canvasTex(512, 144, (c, w, h) => {
-      c.fillStyle = '#6E3A1C'; c.fillRect(0, 0, w, h);
-      for (let i = 0; i < 2500; i++) { c.fillStyle = 'rgba(0,0,0,' + Math.random() * 0.12 + ')'; c.fillRect(Math.random() * w, Math.random() * h, 2, 2); }
-      c.strokeStyle = '#E8C9A0'; c.lineWidth = 4; c.setLineDash([16, 10]);
-      [20, h - 20].forEach((y) => { c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke(); });
-    });
-    const strap = new THREE.Mesh(new RoundedBoxGeometry(3.2, 0.92, 0.12, 4, 0.04),
-      new THREE.MeshStandardMaterial({ map: leather, roughness: 0.62 }));
-    strap.position.set(-0.75, 0, -0.03); g.add(strap);
-    g.scale.setScalar(0.85);
-    return g;
+    const outer = rrShape(2.1, 1.6, 0.42); outer.holes.push(new THREE.Path(rrShape(1.55, 1.05, 0.2).getPoints(10).reverse()));
+    const fg = new THREE.ExtrudeGeometry(outer, { depth: 0.12, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 4, curveSegments: 16 }); fg.center();
+    const frame = new THREE.Mesh(fg, gold); frame.position.x = 0.55; g.add(frame);
+    const prong = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 1.75, 14), gold); prong.rotation.z = Math.PI / 2; prong.position.set(0.5, 0, 0.16); g.add(prong);
+    const leather = canvasTex(512, 144, (c, w, h) => { c.fillStyle = '#6E3A1C'; c.fillRect(0, 0, w, h); for (let i = 0; i < 2500; i++) { c.fillStyle = 'rgba(0,0,0,' + Math.random() * 0.12 + ')'; c.fillRect(Math.random() * w, Math.random() * h, 2, 2); }
+      c.strokeStyle = '#E8C9A0'; c.lineWidth = 4; c.setLineDash([16, 10]); [20, h - 20].forEach((y) => { c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke(); }); });
+    const strap = new THREE.Mesh(new RoundedBoxGeometry(3.2, 0.92, 0.12, 4, 0.04), new THREE.MeshStandardMaterial({ map: leather, roughness: 0.62 })); strap.position.set(-0.75, 0, -0.03); g.add(strap);
+    return { g, lift: 0.85 };
   }
-
-  // ---------- Dé à coudre en métal ----------
   function makeThimble() {
     const p = [new THREE.Vector2(0.001, 1.3)];
     for (let i = 1; i <= 12; i++) { const a = (i / 12) * Math.PI / 2; p.push(new THREE.Vector2(Math.sin(a) * 0.56, 1.3 - (1 - Math.cos(a)) * 0.42)); }
     p.push(new THREE.Vector2(0.66, 0.12), new THREE.Vector2(0.72, 0.06), new THREE.Vector2(0.745, -0.04), new THREE.Vector2(0.7, -0.1), new THREE.Vector2(0.62, -0.08));
-    const geo = new THREE.LatheGeometry(p, 72); geo.translate(0, -0.6, 0);
-    const bump = canvasTex(512, 256, (c, w, h) => {
-      c.fillStyle = '#fff'; c.fillRect(0, 0, w, h); c.fillStyle = '#555';
-      for (let row = 0; row < 15; row++) for (let col = 0; col < 48; col++) {
-        const x = (col + (row % 2) * 0.5) * (w / 48), y = h * 0.16 + row * (h * 0.8 / 15);
-        c.beginPath(); c.arc(x, y, 3.2, 0, Math.PI * 2); c.fill();
-      }
-    }, false);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xDADADF, metalness: 1, roughness: 0.28, bumpMap: bump, bumpScale: 3, side: THREE.DoubleSide });
-    const m = new THREE.Mesh(geo, mat);
-    const g = new THREE.Group(); g.add(m); g.scale.setScalar(1.35);
-    return g;
+    const lg = new THREE.LatheGeometry(p, 72); lg.translate(0, -0.6, 0);
+    const bump = canvasTex(512, 256, (c, w, h) => { c.fillStyle = '#fff'; c.fillRect(0, 0, w, h); c.fillStyle = '#555';
+      for (let r = 0; r < 15; r++) for (let k = 0; k < 48; k++) { c.beginPath(); c.arc((k + (r % 2) * 0.5) * (w / 48), h * 0.16 + r * (h * 0.8 / 15), 3.2, 0, Math.PI * 2); c.fill(); } }, false);
+    const g = new THREE.Group(); g.add(new THREE.Mesh(lg, new THREE.MeshStandardMaterial({ color: 0xDADADF, metalness: 1, roughness: 0.28, bumpMap: bump, bumpScale: 3, side: THREE.DoubleSide })));
+    g.scale.setScalar(1.35);
+    return { g, lift: 0.95 };
   }
-
-  const MAKERS = {
-    spool:   { make: () => makeSpool(), base: [0.38, 0.2, -0.12] },
-    button:  { make: () => makeButton(), base: [-0.2, -0.45, 0.15] },
-    buttons: { make: () => makeButtons(), base: [-0.15, -0.35, 0.1] },
-    buckle:  { make: () => makeBuckle(), base: [0.3, -0.45, -0.12] },
-    thimble: { make: () => makeThimble(), base: [0.32, 0, 0.22] }
-  };
-
-  function makeScene(obj) {
-    const s = new THREE.Scene();
-    s.environment = env;
-    s.add(new THREE.HemisphereLight(0xfff4e6, 0x2e1c12, 0.7));
-    const k = new THREE.DirectionalLight(0xfff1dc, 2.2); k.position.set(3, 4, 5); s.add(k);
-    const r = new THREE.DirectionalLight(0xffc89a, 1.3); r.position.set(-4, -1, -3); s.add(r);
-    const pivot = new THREE.Group(); pivot.add(obj); s.add(pivot);
-    return { scene: s, pivot };
-  }
-
-  const reduce = window.reduceMotion;
-  const slots = slotEls.map((el, i) => {
-    const def = MAKERS[el.dataset.obj] || MAKERS.spool;
-    const { scene, pivot } = makeScene(def.make());
-    const s = { el, scene, pivot, base: def.base, appear: reduce ? 1 : 0, spin: 0, burst: 0, hover: 0, hovering: false, px: 0, py: 0, phase: i * 1.7 };
-    const host = el.closest('.card') || el.parentElement;
-    host.addEventListener('pointermove', (e) => {
-      const r = host.getBoundingClientRect();
-      s.px = (e.clientX - r.left) / r.width - 0.5; s.py = (e.clientY - r.top) / r.height - 0.5;
-      s.hovering = e.pointerType === 'mouse';
-    });
-    host.addEventListener('pointerleave', () => { s.hovering = false; });
-    host.addEventListener('click', (e) => {
-      if (e.target.closest('a')) return;
-      if (window.gsap) gsap.to(s, { burst: '+=' + Math.PI * 2, duration: 1.3, ease: 'power3.out' });
-    });
-    return s;
+  const PROP_SCALE = small ? 0.48 : 0.62;
+  const props = [makeSpool, makeButton, makeBuckle, makeThimble].map((mk, i) => {
+    const { g, lift } = mk();
+    const holder = new THREE.Group(); holder.add(g); scene.add(holder);
+    return { holder, lift, u: 0, side: 1, appear: 0, phase: i * 1.9 };
   });
 
-  // apparition « rebond » quand l'emplacement entre à l'écran
-  if (!reduce) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((en) => {
-        if (!en.isIntersecting) return;
-        const s = slots.find((x) => x.el === en.target); io.unobserve(en.target);
-        if (window.gsap) gsap.to(s, { appear: 1, duration: 1.6, ease: 'elastic.out(1, 0.55)', delay: 0.1 });
-        else s.appear = 1;
-      });
-    }, { threshold: 0.35 });
-    slots.forEach((s) => io.observe(s.el));
+  // ----- Repères de défilement : où en est-on dans le site ? -----
+  const sections = [...document.querySelectorAll('.ch')];
+  const CAM = {          // d : recul derrière le rouleau, h : hauteur, s : décalage latéral, a : regard en avant
+    hero:     { d: -4.2, h: 2.3, s: 7.4, a: 0.0 },
+    note:     { d: 7.5, h: 3.4, s: 4.6, a: 1.0 },
+    atelier:  { d: 6.4, h: 3.8, s: -3.4, a: 1.6 },
+    savoir:   { d: 6.8, h: 3.2, s: 3.2, a: 1.6 },
+    services: { d: 6.2, h: 3.2, s: -2.4, a: 1.4 },
+    tout:     { d: 8.5, h: 5.6, s: 2.2, a: 2.0 },
+    chiffres: { d: 4.2, h: 2.1, s: 5.0, a: 1.0 },
+    etapes:   { d: 7.0, h: 4.0, s: -4.0, a: 1.8 },
+    avis:     { d: 5.6, h: 3.0, s: 3.8, a: 1.4 },
+    infos:    { d: 8.0, h: 4.6, s: -3.0, a: 1.6 },
+    fin:      { d: 0, h: 0, s: 0, a: 0 }
+  };
+  let keys = [], pFinal = 1, maxScroll = 1;
+  function layout() {
+    const vh = window.innerHeight;
+    maxScroll = Math.max(1, document.documentElement.scrollHeight - vh);
+    keys = sections.map((sec, i) => {
+      const center = i === 0 ? 0 : i === sections.length - 1 ? maxScroll : sec.offsetTop + sec.offsetHeight / 2 - vh / 2;
+      return { p: Math.min(1, center / maxScroll), c: CAM[sec.dataset.cam] || CAM.note, id: sec.dataset.cam };
+    });
+    const fin = sections[sections.length - 1];
+    pFinal = Math.min(0.999, (fin.offsetTop - vh * 0.5) / maxScroll);
+    // place chaque objet au moment où sa carte de prix est à l'écran
+    const sv = document.getElementById('services');
+    const slides = sv.querySelectorAll('.slide'), k = slides.length;
+    const start = sv.offsetTop - vh / 2, span = sv.offsetHeight;
+    props.forEach((pr, j) => {
+      const scroll = start + span * ((j + 0.5) / k);
+      pr.u = uFromP(scroll / maxScroll) + 1.0;
+    });
+    // le centimètre où l'on se trouve, affiché dans chaque chapitre
+    sections.forEach((sec) => {
+      const at = sec.querySelector('[data-at]'); if (!at) return;
+      const p = (sec.offsetTop + vh * 0.2) / maxScroll;
+      at.textContent = '· ' + Math.round(uFromP(p) / L * CM) + ' cm';
+    });
+  }
+  const smooth = (x) => x * x * (3 - 2 * x);
+  function uFromP(p) { return L * Math.min(1, Math.max(0, p / pFinal)); }
+  function camAt(p) {
+    if (p <= keys[0].p) return keys[0].c;
+    for (let i = 0; i < keys.length - 1; i++) {
+      const A = keys[i], B = keys[i + 1];
+      if (p <= B.p) {
+        const t = smooth((p - A.p) / Math.max(1e-6, B.p - A.p));
+        return { d: A.c.d + (B.c.d - A.c.d) * t, h: A.c.h + (B.c.h - A.c.h) * t, s: A.c.s + (B.c.s - A.c.s) * t, a: A.c.a + (B.c.a - A.c.a) * t };
+      }
+    }
+    return keys[keys.length - 1].c;
   }
 
-  function resize() { renderer.setSize(canvas.clientWidth, canvas.clientHeight, false); }
-  resize(); window.addEventListener('resize', resize);
+  let W0 = 0, H0 = 0;
+  function resize() {
+    W0 = canvas.clientWidth; H0 = canvas.clientHeight;
+    renderer.setSize(W0, H0, false);
+    camera.aspect = W0 / H0;
+    camera.fov = W0 / H0 < 0.8 ? 52 : 38;
+    camera.updateProjectionMatrix();
+    layout();
+  }
+  resize();
+  window.addEventListener('resize', () => { resize(); });
+  window.addEventListener('load', () => { layout(); });
+  document.fonts && document.fonts.ready.then(layout);
 
+  const pointer = { x: 0, y: 0 };
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) window.addEventListener('pointermove', (e) => {
+    pointer.x = e.clientX / window.innerWidth - 0.5; pointer.y = e.clientY / window.innerHeight - 0.5;
+  }, { passive: true });
+
+  const cmNow = document.getElementById('cmNow');
+  const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(), wantPos = new THREE.Vector3(), wantLook = new THREE.Vector3();
+  const tmp = new THREE.Vector3(), tB = new THREE.Vector3(), tT = new THREE.Vector3();
+  const mid = new THREE.Vector3(); path.getPointAt(0.5, mid);
+  const desktop = () => W0 > 900;
+  let p = 0, first = true, lastU = -1, lastCm = -1;
   const clock = new THREE.Clock();
-  let drew = false;
-  document.documentElement.classList.add('has-3d');
 
   function frame() {
     if (document.hidden) return;
-    const W = canvas.clientWidth, H = canvas.clientHeight;
     const t = reduce ? 0 : clock.getElapsedTime();
-    const vis = [];
-    for (const s of slots) {
-      const r = s.el.getBoundingClientRect();
-      if (r.width === 0 || r.bottom < 0 || r.top > H || r.right < 0 || r.left > W) continue;
-      vis.push([s, r]);
+    const target = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+    p = first || reduce ? target : p + (target - p) * 0.12;
+    const U = uFromP(p);
+    if (Math.abs(U - lastU) > 1e-4) { updateTape(U); lastU = U; }
+
+    // caméra : elle suit le rouleau, puis s'élève au-dessus du mètre entièrement déroulé
+    const c = camAt(p);
+    floorAt(Math.max(0, U - c.d), tmp); vecAt(FB, Math.max(0, U - c.d), tB);
+    wantPos.copy(tmp).addScaledVector(UP, c.h).addScaledVector(tB, c.s);
+    vecAt(FT, U, tT);
+    wantLook.copy(C).addScaledVector(tT, c.a);
+    if (U >= L - 1e-3) wantLook.set(C.x, 0.2, C.z);
+    const fin = smooth(Math.min(1, Math.max(0, (p - pFinal) / Math.max(1e-6, 1 - pFinal))));
+    scene.fog.near = 14 + fin * 70; scene.fog.far = 46 + fin * 110;
+    if (fin > 0) {
+      const ap = tmp.copy(mid).add(new THREE.Vector3(small ? 3 : 9, small ? 58 : 34, small ? 14 : 20));
+      wantPos.lerp(ap, fin);
+      wantLook.lerp(mid, fin);
     }
-    if (!vis.length) {
-      if (drew) { renderer.setScissor(0, 0, W, H); renderer.clear(); drew = false; }
-      return;
-    }
-    renderer.setScissor(0, 0, W, H); renderer.clear();
-    for (const [s, r] of vis) {
-      const cx = (r.left + r.width / 2) / W - 0.5;      // les objets tournent en glissant dans la galerie
-      const cy = (r.top + r.height / 2) / H - 0.5;
-      s.hover += ((s.hovering ? 1 : 0) - s.hover) * 0.08;
-      if (!reduce) s.spin += 0.004 + s.hover * 0.025;
-      const [bx, by, bz] = s.base;
-      const p = s.pivot;
-      p.scale.setScalar(Math.max(0.0001, s.appear));
-      p.rotation.y = by + s.spin + s.burst + cx * 1.6 + s.px * 0.7 * s.hover;
-      p.rotation.x = bx + Math.sin(t * 0.7 + s.phase) * 0.08 + cy * 0.35 + s.py * 0.5 * s.hover;
-      p.rotation.z = bz + (1 - Math.min(1, s.appear)) * 0.9;
-      p.position.y = Math.sin(t * 1.1 + s.phase) * 0.09;
-      renderer.setViewport(r.left, H - r.bottom, r.width, r.height);
-      renderer.setScissor(r.left, H - r.bottom, r.width, r.height);
-      camera.aspect = r.width / r.height; camera.updateProjectionMatrix();
-      renderer.render(s.scene, camera);
-    }
-    drew = true;
+    wantPos.x += pointer.x * 0.5; wantPos.y += -pointer.y * 0.3;
+    if (first) { camPos.copy(wantPos); camLook.copy(wantLook); }
+    else { camPos.lerp(wantPos, reduce ? 1 : 0.1); camLook.lerp(wantLook, reduce ? 1 : 0.1); }
+    camera.position.copy(camPos); camera.lookAt(camLook);
+
+    // décalage d'image : sur ordinateur le mètre passe à droite du texte, sur téléphone au-dessus
+    const heroish = Math.max(1 - smooth(Math.min(1, Math.max(0, (p - keys[1].p) / Math.max(1e-6, keys[2].p - keys[1].p)))), fin);
+    const ox = desktop() ? -W0 * 0.17 * (1 - heroish) : 0;
+    const oy = desktop() ? -H0 * 0.2 * heroish : H0 * (0.2 * (1 - heroish) - 0.16 * heroish);
+    camera.setViewOffset(W0, H0, ox, oy, W0, H0);
+
+    // objets de l'atelier
+    props.forEach((pr) => {
+      const near = U > pr.u - 3.5 ? 1 : 0;
+      pr.appear += (near - pr.appear) * (reduce ? 1 : 0.06);
+      floorAt(pr.u, tmp); vecAt(FB, pr.u, tB);
+      const sc = PROP_SCALE * Math.max(0.0001, pr.appear);
+      pr.holder.scale.setScalar(sc);
+      pr.holder.position.copy(tmp).addScaledVector(tB, pr.side * 1.35).addScaledVector(UP, pr.lift * sc + Math.sin(t * 1.2 + pr.phase) * 0.06);
+      pr.holder.rotation.y = t * 0.45 + pr.phase;
+      pr.holder.rotation.z = Math.sin(t * 0.8 + pr.phase) * 0.06;
+    });
+
+    const cmv = Math.round(U / L * CM);
+    if (cmv !== lastCm) { cmNow.textContent = cmv; lastCm = cmv; }
+
+    renderer.render(scene, camera);
+    if (first) { first = false; canvas.classList.add('ready'); }
   }
   if (window.gsap) gsap.ticker.add(frame);
   else (function loop() { requestAnimationFrame(loop); frame(); })();
-
-  // Cartes qui s'inclinent sous la souris
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !reduce) {
-    document.querySelectorAll('.card').forEach((card) => {
-      card.addEventListener('pointermove', (e) => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-        card.style.transform = 'perspective(1000px) rotateX(' + (-y * 7).toFixed(2) + 'deg) rotateY(' + (x * 9).toFixed(2) + 'deg) translateY(-6px)';
-      });
-      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-    });
-  }
-</script>
-
-<!-- Prix qui défilent à l'arrivée de chaque carte -->
-<script>
-  (function () {
-    if (window.reduceMotion || !window.gsap) return;
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (!en.isIntersecting) return;
-        io.unobserve(en.target);
-        var el = en.target, end = parseInt(el.dataset.price, 10), o = { v: 0 };
-        gsap.to(o, { v: end, duration: 1.3, ease: 'power3.out', onUpdate: function () { el.textContent = Math.round(o.v) + ' €'; } });
-      });
-    }, { threshold: 0.6 });
-    document.querySelectorAll('.price[data-price]').forEach(function (el) { io.observe(el); });
-  })();
 </script>
 </body>
 </html>
